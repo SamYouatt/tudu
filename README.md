@@ -6,13 +6,9 @@
 `tudu` - Shows the tasks for today
 
 ```
-When have tasks:
 1   ◯ - Do dishes
 2   ◐ - Do taxes
 3   ● - 5 pushups
-
-When no tasks:
-You have no tasks for today, to add a task today use the 'tudu add "Example task"' command
 ```
 
 `tudu today/tomorrow/yesterday` - Shows the tasks for the relative day
