@@ -14,6 +14,31 @@ enum TaskState {
     Forwarded,
     Ignored,
 }
+struct AddCommand {
+    task: String,
+    date: Option<TuduDate>,
+}
+
+struct RemoveCommand {
+    index: usize,
+    date: Option<TuduDate>,
+}
+
+struct SetCommand {
+    index: usize,
+    date: Option<TuduDate>,
+    state: TaskState,
+}
+
+struct CompleteCommand {
+    index: usize,
+    date: Option<TuduDate>,
+}
+
+struct ViewCommand {
+    date: TuduDate,
+}
+
 struct TuduDate {
     date: usize,
     month: usize,
