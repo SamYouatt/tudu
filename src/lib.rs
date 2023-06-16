@@ -53,3 +53,7 @@ struct TuduDate {
     month: usize,
     year: usize,
 }
+
+fn parse_command(args: Vec<&str>) -> Command {
+    todo!()
+}
