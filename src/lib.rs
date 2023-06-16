@@ -57,3 +57,18 @@ struct TuduDate {
 fn parse_command(args: Vec<&str>) -> Command {
     todo!()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn create_root_command_from_no_args() {
+        let args = vec!["tudu"];
+
+        let command = parse_command(args);
+        let expected_command = Command::Root;
+
+        assert_eq!(command, expected_command);
+    }
+}
