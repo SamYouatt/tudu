@@ -1,9 +1,9 @@
 enum Command {
-    Add,
-    Remove,
-    Set,
-    Complete,
-    View(TuduDate),
+    Add(AddCommand),
+    Remove(RemoveCommand),
+    Set(SetCommand),
+    Complete(CompleteCommand),
+    View(ViewCommand),
     Root,
 }
 
