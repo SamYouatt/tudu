@@ -3,6 +3,12 @@ enum Command {
     Remove,
     Set,
     Complete,
-    Date,
+    Date(TuduDate),
     Root,
+}
+
+struct TuduDate {
+    date: usize,
+    month: usize,
+    year: usize,
 }
