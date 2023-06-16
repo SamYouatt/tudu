@@ -7,6 +7,13 @@ enum Command {
     Root,
 }
 
+enum TaskState {
+    NotStarted,
+    Started,
+    Complete,
+    Forwarded,
+    Ignored,
+}
 struct TuduDate {
     date: usize,
     month: usize,
