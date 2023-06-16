@@ -3,7 +3,7 @@ enum Command {
     Remove,
     Set,
     Complete,
-    Date(TuduDate),
+    View(TuduDate),
     Root,
 }
 
