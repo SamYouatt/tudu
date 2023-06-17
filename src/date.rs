@@ -12,8 +12,37 @@ impl TuduDate {
         TuduDate { day, month, year }
     }
 
-    pub fn from_date(date: &str) -> Result<TuduDate, Box<dyn Error>> {
-        todo!()
+    pub fn from_date(date: &str) -> Result<TuduDate, TuduError> {
+        let sections: Vec<&str> = date.split("-").collect();
+
+        match sections.len() {
+            2 => match (sections[0].parse::<usize>(), sections[1].parse::<usize>()) {
+                (Ok(day), Ok(month)) => {
+                    if let Err(err) = is_valid_date(day, month) {
+                        return Err(err);
+                    }
+
+                    // TODO: this 2023 should be the actual year
+                    return Ok(TuduDate::new(day, month, 2023));
+                }
+                _ => return Err(TuduError::InvalidDate),
+            },
+            3 => match (
+                sections[0].parse::<usize>(),
+                sections[1].parse::<usize>(),
+                sections[2].parse::<usize>(),
+            ) {
+                (Ok(day), Ok(month), Ok(year)) => {
+                    if let Err(err) = is_valid_date(day, month) {
+                        return Err(err);
+                    }
+
+                    return Ok(TuduDate::new(day, month, year));
+                }
+                _ => Err(TuduError::InvalidDate),
+            },
+            _ => return Err(TuduError::InvalidDate),
+        }
     }
 }
 
