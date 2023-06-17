@@ -49,7 +49,7 @@ struct ViewCommand {
 
 #[derive(Eq, PartialEq, Debug)]
 struct TuduDate {
-    date: usize,
+    day: usize,
     month: usize,
     year: usize,
 }
@@ -105,6 +105,25 @@ mod tests {
         let expected_config = AddCommand {
             task: String::from("Example task"),
             date: None,
+        };
+        let expected_command = Command::Add(expected_config);
+
+        let command = parse_command(args);
+
+        assert_eq!(command, expected_command);
+    }
+
+    #[test]
+    fn create_add_command_with_date_when_given() {
+        let args = vec!["tudu", "add", "10-6-23", "\"Example task\""];
+
+        let expected_config = AddCommand {
+            task: String::from("Example task"),
+            date: Some(TuduDate {
+                day: 10,
+                month: 6,
+                year: 2023,
+            }),
         };
         let expected_command = Command::Add(expected_config);
 
