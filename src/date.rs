@@ -31,4 +31,15 @@ mod tests {
 
         assert_eq!(date, expected_date);
     }
+
+    #[test]
+    fn from_date_when_given_yearless_date_creates_correct_date() {
+        let input_date = "12-3";
+
+        let expected_date = TuduDate::new(12, 3, 23);
+
+        let date = TuduDate::from_date(input_date).unwrap();
+
+        assert_eq!(date, expected_date);
+    }
 }
