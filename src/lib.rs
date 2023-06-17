@@ -55,6 +55,10 @@ struct TuduDate {
 }
 
 fn parse_command(args: Vec<&str>) -> Command {
+    if args.len() == 1 {
+        return Command::Root;
+    }
+
     todo!()
 }
 
