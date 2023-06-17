@@ -93,7 +93,7 @@ mod tests {
 
     #[test]
     fn create_add_command_with_only_task_when_no_date() {
-        let args = vec!["tudu", "add", "Example task"];
+        let args = vec!["tudu", "add", "\"Example task\""];
 
         let expected_config = AddCommand {
             task: String::from("Example task"),
