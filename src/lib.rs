@@ -1,5 +1,6 @@
 use crate::date::TuduDate;
 mod date;
+mod error;
 
 #[derive(Eq, PartialEq, Debug)]
 enum Command {
@@ -66,6 +67,29 @@ fn parse_add_command(args: Vec<&str>) -> Command {
         return Command::Add(command);
     }
 
+    if args.len() == 2 {
+        let date_arg = args[0];
+        let task_arg = args[1];
+
+        let date = match TuduDate::from_date(date_arg) {
+            Ok(date) => date,
+            Err(err) => todo!(),
+        };
+
+        if !task_arg.starts_with("\"") && !task_arg.ends_with("\"") {
+            // Error here
+            todo!()
+        }
+
+        let command = AddCommand {
+            task: task_arg.replace("\"", ""),
+            date: Some(date),
+        };
+
+        return Command::Add(command);
+    }
+
+    // TODO: throw error here
     todo!()
 }
 
