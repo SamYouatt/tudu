@@ -111,7 +111,7 @@ mod tests {
 
     #[test]
     fn create_add_command_with_date_when_given() {
-        let args = vec!["tudu", "add", "10-6-23", "\"Example task\""];
+        let args = vec!["tudu", "add", "10-6-2023", "\"Example task\""];
 
         let expected_config = AddCommand {
             task: String::from("Example task"),
