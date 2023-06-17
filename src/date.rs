@@ -23,9 +23,9 @@ mod tests {
 
     #[test]
     fn from_date_when_given_full_date_creates_correct_date() {
-        let input_date = "10-6-23";
+        let input_date = "10-6-2023";
 
-        let expected_date = TuduDate::new(10, 6, 23);
+        let expected_date = TuduDate::new(10, 6, 2023);
 
         let date = TuduDate::from_date(input_date).unwrap();
 
@@ -36,7 +36,7 @@ mod tests {
     fn from_date_when_given_yearless_date_creates_correct_date() {
         let input_date = "12-3";
 
-        let expected_date = TuduDate::new(12, 3, 23);
+        let expected_date = TuduDate::new(12, 3, 2023);
 
         let date = TuduDate::from_date(input_date).unwrap();
 
