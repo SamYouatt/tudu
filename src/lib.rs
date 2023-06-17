@@ -1,3 +1,6 @@
+use crate::date::TuduDate;
+mod date;
+
 #[derive(Eq, PartialEq, Debug)]
 enum Command {
     Add(AddCommand),
@@ -45,13 +48,6 @@ struct CompleteCommand {
 #[derive(Eq, PartialEq, Debug)]
 struct ViewCommand {
     date: TuduDate,
-}
-
-#[derive(Eq, PartialEq, Debug)]
-struct TuduDate {
-    day: usize,
-    month: usize,
-    year: usize,
 }
 
 fn parse_add_command(args: Vec<&str>) -> Command {
@@ -119,11 +115,7 @@ mod tests {
 
         let expected_config = AddCommand {
             task: String::from("Example task"),
-            date: Some(TuduDate {
-                day: 10,
-                month: 6,
-                year: 2023,
-            }),
+            date: Some(TuduDate::new(10, 6, 2023)),
         };
         let expected_command = Command::Add(expected_config);
 
