@@ -54,12 +54,27 @@ struct TuduDate {
     year: usize,
 }
 
+fn parse_add_command(args: Vec<&str>) -> Command {
+    if args.len() == 1 {
+        let command = AddCommand {
+            task: args[0].to_owned(),
+            date: None,
+        };
+        return Command::Add(command);
+    }
+
+    todo!()
+}
+
 fn parse_command(args: Vec<&str>) -> Command {
     if args.len() == 1 {
         return Command::Root;
     }
 
-    todo!()
+    match args[1] {
+        "add" => return parse_add_command(args[2..].to_vec()),
+        _ => todo!(),
+    }
 }
 
 #[cfg(test)]
