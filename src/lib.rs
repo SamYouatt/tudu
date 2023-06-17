@@ -75,4 +75,19 @@ mod tests {
 
         assert_eq!(command, expected_command);
     }
+
+    #[test]
+    fn create_add_command_with_only_task_when_no_date() {
+        let args = vec!["tudu", "add", "Example task"];
+
+        let expected_config = AddCommand {
+            task: String::from("Example task"),
+            date: None,
+        };
+        let expected_command = Command::Add(expected_config);
+
+        let command = parse_command(args);
+
+        assert_eq!(command, expected_command);
+    }
 }
