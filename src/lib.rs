@@ -56,8 +56,15 @@ struct TuduDate {
 
 fn parse_add_command(args: Vec<&str>) -> Command {
     if args.len() == 1 {
+        let task_arg = args[0].to_owned();
+
+        if !task_arg.starts_with("\"") && !task_arg.ends_with("\"") {
+            // Error here
+            todo!()
+        }
+
         let command = AddCommand {
-            task: args[0].to_owned(),
+            task: task_arg.replace("\"", ""),
             date: None,
         };
         return Command::Add(command);
