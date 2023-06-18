@@ -157,7 +157,7 @@ mod tests {
         };
         let expected_command = Command::View(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -172,7 +172,7 @@ mod tests {
         };
         let expected_command = Command::Add(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -187,7 +187,7 @@ mod tests {
         };
         let expected_command = Command::Add(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -202,7 +202,7 @@ mod tests {
         };
         let expected_command = Command::Remove(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -217,7 +217,7 @@ mod tests {
         };
         let expected_command = Command::Remove(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
         assert_eq!(command, expected_command);
     }
 
@@ -232,7 +232,7 @@ mod tests {
         };
         let expected_command = Command::Set(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -248,7 +248,7 @@ mod tests {
         };
         let expected_command = Command::Set(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -264,7 +264,7 @@ mod tests {
         };
         let expected_command = Command::Set(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -280,7 +280,7 @@ mod tests {
         };
         let expected_command = Command::Set(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -294,7 +294,7 @@ mod tests {
         };
         let expected_command = Command::View(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
