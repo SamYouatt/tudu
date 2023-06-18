@@ -1,6 +1,8 @@
 use crate::date::TuduDate;
+use crate::model::{AddCommand, Command, RemoveCommand, SetCommand, TaskState, ViewCommand};
 mod date;
 mod error;
+mod model;
 
 fn parse_add_command(args: Vec<&str>) -> Command {
     let task_arg = args[0].to_owned();
