@@ -150,6 +150,21 @@ fn parse_complete_command(args: Vec<&str>) -> Command {
     return Command::Set(config);
 }
 
+fn parse_view_command(args: Vec<&str>) -> Command {
+    if args.len() > 1 {
+        todo!();
+    }
+
+    let date = match TuduDate::from_date(args[0]) {
+        Ok(date) => date,
+        Err(_) => todo!(),
+    };
+
+    let config = ViewCommand { date };
+
+    return Command::View(config);
+}
+
 fn parse_command(args: Vec<&str>) -> Command {
     if args.len() == 1 {
         let root_config = ViewCommand {
@@ -163,6 +178,7 @@ fn parse_command(args: Vec<&str>) -> Command {
         "remove" => return parse_remove_command(args[2..].to_vec()),
         "set" => return parse_set_command(args[2..].to_vec()),
         "complete" => return parse_complete_command(args[2..].to_vec()),
+        "view" => return parse_view_command(args[2..].to_vec()),
         _ => todo!(),
     }
 }
