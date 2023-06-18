@@ -150,7 +150,7 @@ fn parse_command(args: Vec<&str>) -> Result<Command, TuduError> {
         "set" => return parse_set_command(args[2..].to_vec()),
         "complete" => return parse_complete_command(args[2..].to_vec()),
         "view" => return parse_view_command(args[2..].to_vec()),
-        _ => todo!(),
+        _ => return Err(TuduError::UnknownCommand),
     }
 }
 
