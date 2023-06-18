@@ -1,8 +1,7 @@
-use std::fs::File;
-use std::io::Read;
-
 use crate::error::TuduError;
 use crate::model::TaskState;
+use std::fs::File;
+use std::io::Read;
 
 #[derive(Debug, PartialEq, Eq)]
 struct Task {
@@ -73,7 +72,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_task_file_creates_correct_state() {
+    fn create_from_file_creates_correct_state() {
         let test_file = "./src/tests/2023-06-07.txt";
 
         let expected_tasks = vec![
@@ -87,7 +86,7 @@ mod tests {
             tasks: expected_tasks,
         };
 
-        let task_list = parse_task_file(test_file).unwrap();
+        let task_list = TaskList::try_create_from_file(test_file).unwrap();
 
         assert_eq!(task_list, expected_task_list);
     }
