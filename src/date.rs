@@ -46,6 +46,15 @@ impl TuduDate {
             _ => return Err(TuduError::InvalidDate),
         }
     }
+
+    pub fn today() -> TuduDate {
+        let now = Local::now();
+        let day = now.day();
+        let month = now.month();
+        let year = now.year().try_into().unwrap();
+
+        TuduDate { day, month, year }
+    }
 }
 
 fn is_valid_date(day: u32, month: u32) -> Result<(), TuduError> {
