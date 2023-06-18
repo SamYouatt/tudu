@@ -28,6 +28,24 @@ impl TaskList {
 }
 
 fn parse_task_line(line: &str) -> Result<Task, TuduError> {
+    let sections: Vec<&str> = line.split(',').collect();
+
+    if sections.len() != 2 {
+        return Err(TuduError::BadTaskFormat);
+    }
+
+    let state = match sections[0] {
+        "S" => TaskState::Started,
+        "C" => TaskState::Complete,
+        "X" => TaskState::Ignored,
+        "F" => TaskState::Forwarded,
+        "N" => TaskState::NotStarted,
+        _ => return Err(TuduError::FailedToReadFile),
+    };
+
+    let task = sections[1].to_owned();
+
+    Ok(Task { task, state })
 }
 
 fn parse_task_file(filename: &str) -> Result<TaskList, TuduError> {
