@@ -96,6 +96,36 @@ fn parse_remove_command(args: Vec<&str>) -> Command {
     return Command::Remove(config);
 }
 
+fn parse_set_command(args: Vec<&str>) -> Command {
+    let index = match args[0].parse::<usize>() {
+        Ok(index) => index,
+        Err(_) => todo!(),
+    };
+
+    let state = match args.get(1) {
+        Some(&"C") => TaskState::Complete,
+        Some(&"N") => TaskState::NotStarted,
+        Some(&"S") => TaskState::Started,
+        Some(&"F") => TaskState::Forwarded,
+        Some(&"X") => TaskState::Ignored,
+        Some(_) => todo!(),
+        None => todo!(),
+    };
+
+    let date = match args.len() {
+        2 => None,
+        3 => match TuduDate::from_date(args[2]) {
+            Ok(date) => Some(date),
+            Err(_) => todo!(),
+        },
+        _ => todo!(),
+    };
+
+    let config = SetCommand { index, state, date };
+
+    return Command::Set(config);
+}
+
 fn parse_command(args: Vec<&str>) -> Command {
     if args.len() == 1 {
         return Command::Root;
@@ -104,6 +134,7 @@ fn parse_command(args: Vec<&str>) -> Command {
     match args[1] {
         "add" => return parse_add_command(args[2..].to_vec()),
         "remove" => return parse_remove_command(args[2..].to_vec()),
+        "set" => return parse_set_command(args[2..].to_vec()),
         _ => todo!(),
     }
 }
