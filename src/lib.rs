@@ -166,14 +166,25 @@ fn parse_command(args: Vec<&str>) -> Command {
 
 #[cfg(test)]
 mod tests {
+    use chrono::Datelike;
+
     use super::*;
 
     #[test]
     fn create_root_command_from_no_args() {
         let args = vec!["tudu"];
 
+        let now: DateTime<Local> = Local::now();
+        let day = now.day();
+        let month = now.month();
+        let year: u32 = now.year().try_into().unwrap();
+
+        let expected_config = ViewCommand {
+            date: TuduDate::new(day, month, year),
+        };
+        let expected_command = Command::View(expected_config);
+
         let command = parse_command(args);
-        let expected_command = Command::Root;
 
         assert_eq!(command, expected_command);
     }
