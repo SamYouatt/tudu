@@ -34,7 +34,7 @@ fn parse_add_command(args: Vec<&str>) -> Result<Command, TuduError> {
 fn parse_remove_command(args: Vec<&str>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
-        Err(_) => todo!(),
+        Err(_) => return Err(TuduError::InvalidIndex),
     };
 
     let date = match args.len() {
@@ -58,7 +58,7 @@ fn parse_remove_command(args: Vec<&str>) -> Result<Command, TuduError> {
 fn parse_set_command(args: Vec<&str>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
-        Err(_) => todo!(),
+        Err(_) => return Err(TuduError::InvalidIndex),
     };
 
     let state = match args.get(1) {
@@ -94,7 +94,7 @@ fn parse_set_command(args: Vec<&str>) -> Result<Command, TuduError> {
 fn parse_complete_command(args: Vec<&str>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
-        Err(_) => todo!(),
+        Err(_) => return Err(TuduError::InvalidIndex),
     };
 
     let date = match args.len() {

@@ -3,5 +3,6 @@ pub enum TuduError {
     InvalidTask,
     InvalidDate,
     InvalidArguments(String),
+    InvalidIndex,
     UnknownCommand,
 }
