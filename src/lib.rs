@@ -118,7 +118,7 @@ fn parse_view_command(args: Vec<&str>) -> Command {
     return Command::View(config);
 }
 
-fn parse_command(args: Vec<&str>) -> Command {
+fn parse_command(args: Vec<&str>) -> Result<Command, TuduError> {
     if args.len() == 1 {
         let root_config = ViewCommand {
             date: TuduDate::today(),
