@@ -57,7 +57,7 @@ impl TuduDate {
     }
 
     pub fn to_filename(&self) -> String {
-        todo!()
+        format!("{}-{:02}-{:02}.txt", self.year, self.month, self.day)
     }
 }
 
