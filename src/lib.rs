@@ -169,7 +169,7 @@ fn parse_command(args: Vec<&str>) -> Command {
 
 #[cfg(test)]
 mod tests {
-    use chrono::Datelike;
+    use chrono::{DateTime, Datelike, Local};
 
     use super::*;
 
