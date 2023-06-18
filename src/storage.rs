@@ -25,7 +25,13 @@ impl TaskList {
         TaskList { tasks: Vec::new() }
     }
 
+    pub fn try_create_from_file(date: &TuduDate) -> Result<TaskList, TuduError> {
+        let filename = date.to_filename();
 
+        match parse_task_file(&filename) {
+            Ok(task_list) => Ok(task_list),
+            Err(TuduError::NoTaskFile) => Ok(TaskList::empty()),
+            Err(err) => Err(err),
         }
     }
 }
