@@ -52,45 +52,27 @@ struct ViewCommand {
 }
 
 fn parse_add_command(args: Vec<&str>) -> Command {
-    if args.len() == 1 {
-        let task_arg = args[0].to_owned();
+    let task_arg = args[0].to_owned();
 
-        if !task_arg.starts_with("\"") && !task_arg.ends_with("\"") {
-            // Error here
-            todo!()
-        }
-
-        let command = AddCommand {
-            task: task_arg.replace("\"", ""),
-            date: None,
-        };
-        return Command::Add(command);
+    if !task_arg.starts_with("\"") && !task_arg.ends_with("\"") {
+        // Error here
+        todo!()
     }
 
-    if args.len() == 2 {
-        let date_arg = args[0];
-        let task_arg = args[1];
+    let task = task_arg.replace("\"", "");
 
-        let date = match TuduDate::from_date(date_arg) {
-            Ok(date) => date,
-            Err(err) => todo!(),
-        };
+    let date = match args.len() {
+        2 => match TuduDate::from_date(args[1]) {
+            Ok(date) => Some(date),
+            Err(_) => todo!(),
+        },
+        1 => None,
+        _ => todo!(),
+    };
 
-        if !task_arg.starts_with("\"") && !task_arg.ends_with("\"") {
-            // Error here
-            todo!()
-        }
+    let config = AddCommand { task, date };
 
-        let command = AddCommand {
-            task: task_arg.replace("\"", ""),
-            date: Some(date),
-        };
-
-        return Command::Add(command);
-    }
-
-    // TODO: throw error here
-    todo!()
+    return Command::Add(config);
 }
 
 fn parse_remove_command(args: Vec<&str>) -> Command {
