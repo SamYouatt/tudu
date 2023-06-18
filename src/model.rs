@@ -5,9 +5,7 @@ pub enum Command {
     Add(AddCommand),
     Remove(RemoveCommand),
     Set(SetCommand),
-    Complete(CompleteCommand),
     View(ViewCommand),
-    Root,
 }
 
 #[derive(Eq, PartialEq, Debug)]
