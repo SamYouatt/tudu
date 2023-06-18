@@ -243,4 +243,36 @@ mod tests {
 
         assert_eq!(command, expected_command);
     }
+
+    #[test]
+    fn create_complete_command_without_date() {
+        let args = vec!["tudu", "complete", "2"];
+
+        let expected_config = SetCommand {
+            index: 2,
+            state: TaskState::Complete,
+            date: None,
+        };
+        let expected_command = Command::Set(expected_config);
+
+        let command = parse_command(args);
+
+        assert_eq!(command, expected_command);
+    }
+
+    #[test]
+    fn create_complete_command_with_date() {
+        let args = vec!["tudu", "complete", "3", "10-6-2023"];
+
+        let expected_config = SetCommand {
+            index: 3,
+            state: TaskState::Complete,
+            date: Some(TuduDate::new(10, 6, 2023)),
+        };
+        let expected_command = Command::Set(expected_config);
+
+        let command = parse_command(args);
+
+        assert_eq!(command, expected_command);
+    }
 }
