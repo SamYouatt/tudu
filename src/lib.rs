@@ -300,4 +300,18 @@ mod tests {
 
         assert_eq!(command, expected_command);
     }
+
+    #[test]
+    fn create_view_command_with_date() {
+        let args = vec!["tudu", "view", "10-6-2023"];
+
+        let expected_config = ViewCommand {
+            date: TuduDate::new(10, 6, 2023),
+        };
+        let expected_command = Command::View(expected_config);
+
+        let command = parse_command(args);
+
+        assert_eq!(command, expected_command);
+    }
 }
