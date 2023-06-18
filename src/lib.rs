@@ -180,4 +180,36 @@ mod tests {
         let command = parse_command(args);
         assert_eq!(command, expected_command);
     }
+
+    #[test]
+    fn create_set_command_without_date() {
+        let args = vec!["tudu", "set", "3", "S"];
+
+        let expected_config = SetCommand {
+            index: 3,
+            state: TaskState::Started,
+            date: None,
+        };
+        let expected_command = Command::Set(expected_config);
+
+        let command = parse_command(args);
+
+        assert_eq!(command, expected_command);
+    }
+
+    #[test]
+    fn create_set_command_with_date() {
+        let args = vec!["tudu", "set", "3", "X", "10-6-2023"];
+
+        let expected_config = SetCommand {
+            index: 3,
+            state: TaskState::Ignored,
+            date: Some(TuduDate::new(10, 6, 2023)),
+        };
+        let expected_command = Command::Set(expected_config);
+
+        let command = parse_command(args);
+
+        assert_eq!(command, expected_command);
+    }
 }
