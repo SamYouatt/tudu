@@ -1,14 +1,16 @@
+use chrono::{Datelike, Local};
+
 use crate::error::TuduError;
 
 #[derive(Eq, PartialEq, Debug)]
 pub struct TuduDate {
-    day: usize,
-    month: usize,
-    year: usize,
+    day: u32,
+    month: u32,
+    year: u32,
 }
 
 impl TuduDate {
-    pub fn new(day: usize, month: usize, year: usize) -> TuduDate {
+    pub fn new(day: u32, month: u32, year: u32) -> TuduDate {
         TuduDate { day, month, year }
     }
 
@@ -16,7 +18,7 @@ impl TuduDate {
         let sections: Vec<&str> = date.split("-").collect();
 
         match sections.len() {
-            2 => match (sections[0].parse::<usize>(), sections[1].parse::<usize>()) {
+            2 => match (sections[0].parse::<u32>(), sections[1].parse::<u32>()) {
                 (Ok(day), Ok(month)) => {
                     if let Err(err) = is_valid_date(day, month) {
                         return Err(err);
@@ -28,9 +30,9 @@ impl TuduDate {
                 _ => return Err(TuduError::InvalidDate),
             },
             3 => match (
-                sections[0].parse::<usize>(),
-                sections[1].parse::<usize>(),
-                sections[2].parse::<usize>(),
+                sections[0].parse::<u32>(),
+                sections[1].parse::<u32>(),
+                sections[2].parse::<u32>(),
             ) {
                 (Ok(day), Ok(month), Ok(year)) => {
                     if let Err(err) = is_valid_date(day, month) {
@@ -46,7 +48,7 @@ impl TuduDate {
     }
 }
 
-fn is_valid_date(day: usize, month: usize) -> Result<(), TuduError> {
+fn is_valid_date(day: u32, month: u32) -> Result<(), TuduError> {
     return match month {
         1 | 3 | 5 | 7 | 8 | 10 | 12 => (day <= 31).then(|| ()).ok_or(TuduError::InvalidDate),
         4 | 6 | 9 | 11 => (day <= 30).then(|| ()).ok_or(TuduError::InvalidDate),
