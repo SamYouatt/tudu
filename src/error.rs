@@ -4,5 +4,6 @@ pub enum TuduError {
     InvalidDate,
     InvalidArguments(String),
     InvalidIndex,
+    InvalidState,
     UnknownCommand,
 }

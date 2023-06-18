@@ -67,7 +67,7 @@ fn parse_set_command(args: Vec<&str>) -> Result<Command, TuduError> {
         Some(&"S") => TaskState::Started,
         Some(&"F") => TaskState::Forwarded,
         Some(&"X") => TaskState::Ignored,
-        Some(_) => todo!(),
+        Some(_) => return Err(TuduError::InvalidState),
         None => {
             return Err(TuduError::InvalidArguments(String::from(
                 "`set` accepts a task number and a task state, for states see `tudu help`",
