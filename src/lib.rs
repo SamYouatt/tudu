@@ -16,10 +16,7 @@ fn parse_add_command(args: Vec<&str>) -> Result<Command, TuduError> {
 
     let date =
         match args.len() {
-            2 => match TuduDate::from_date(args[1]) {
-                Ok(date) => Some(date),
-                Err(err) => return Err(err),
-            },
+            2 => Some(TuduDate::from_date(args[1])?),
             1 => None,
             _ => return Err(TuduError::InvalidArguments(String::from(
                 "`add` accepts a task, e.g. \"Example task\", and an optional date, e.g. 10-6-2023",
@@ -38,10 +35,7 @@ fn parse_remove_command(args: Vec<&str>) -> Result<Command, TuduError> {
     };
 
     let date = match args.len() {
-        2 => match TuduDate::from_date(args[1]) {
-            Ok(date) => Some(date),
-            Err(err) => return Err(err),
-        },
+        2 => Some(TuduDate::from_date(args[1])?),
         1 => None,
         _ => {
             return Err(TuduError::InvalidArguments(String::from(
@@ -77,10 +71,7 @@ fn parse_set_command(args: Vec<&str>) -> Result<Command, TuduError> {
 
     let date = match args.len() {
         2 => None,
-        3 => match TuduDate::from_date(args[2]) {
-            Ok(date) => Some(date),
-            Err(err) => return Err(err),
-        },
+        3 => Some(TuduDate::from_date(args[2])?),
         _ => return Err(TuduError::InvalidArguments(
                     String::from("`set` accepts a task number, a task state, and an optional date, e.g. 10-6-2023. For states see `tudu help`")
                 )),
@@ -99,10 +90,7 @@ fn parse_complete_command(args: Vec<&str>) -> Result<Command, TuduError> {
 
     let date = match args.len() {
         1 => None,
-        2 => match TuduDate::from_date(args[1]) {
-            Ok(date) => Some(date),
-            Err(err) => return Err(err),
-        },
+        2 => Some(TuduDate::from_date(args[1])?),
         _ => {
             return Err(TuduError::InvalidArguments(String::from(
                 "`complete` accepts a task number and an optional date, e.g. 10-6-2023",
@@ -126,10 +114,7 @@ fn parse_view_command(args: Vec<&str>) -> Result<Command, TuduError> {
         )));
     }
 
-    let date = match TuduDate::from_date(args[0]) {
-        Ok(date) => date,
-        Err(err) => return Err(err),
-    };
+    let date = TuduDate::from_date(args[0])?;
 
     let config = ViewCommand { date };
 
