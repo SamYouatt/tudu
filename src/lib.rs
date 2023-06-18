@@ -17,7 +17,7 @@ fn parse_add_command(args: Vec<&str>) -> Result<Command, TuduError> {
     let date = match args.len() {
         2 => match TuduDate::from_date(args[1]) {
             Ok(date) => Some(date),
-            Err(_) => todo!(),
+            Err(err) => return Err(err),
         },
         1 => None,
         _ => todo!(),
@@ -37,7 +37,7 @@ fn parse_remove_command(args: Vec<&str>) -> Result<Command, TuduError> {
     let date = match args.len() {
         2 => match TuduDate::from_date(args[1]) {
             Ok(date) => Some(date),
-            Err(_) => todo!(),
+            Err(err) => return Err(err),
         },
         1 => None,
         // TODO: error here
@@ -69,7 +69,7 @@ fn parse_set_command(args: Vec<&str>) -> Result<Command, TuduError> {
         2 => None,
         3 => match TuduDate::from_date(args[2]) {
             Ok(date) => Some(date),
-            Err(_) => todo!(),
+            Err(err) => return Err(err),
         },
         _ => todo!(),
     };
@@ -89,7 +89,7 @@ fn parse_complete_command(args: Vec<&str>) -> Result<Command, TuduError> {
         1 => None,
         2 => match TuduDate::from_date(args[1]) {
             Ok(date) => Some(date),
-            Err(_) => todo!(),
+            Err(err) => return Err(err),
         },
         _ => todo!(),
     };
@@ -110,7 +110,7 @@ fn parse_view_command(args: Vec<&str>) -> Result<Command, TuduError> {
 
     let date = match TuduDate::from_date(args[0]) {
         Ok(date) => date,
-        Err(_) => todo!(),
+        Err(err) => return Err(err),
     };
 
     let config = ViewCommand { date };
