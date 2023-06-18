@@ -152,7 +152,10 @@ fn parse_complete_command(args: Vec<&str>) -> Command {
 
 fn parse_command(args: Vec<&str>) -> Command {
     if args.len() == 1 {
-        return Command::Root;
+        let root_config = ViewCommand {
+            date: TuduDate::today(),
+        };
+        return Command::View(root_config);
     }
 
     match args[1] {
