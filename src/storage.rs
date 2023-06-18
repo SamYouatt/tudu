@@ -72,8 +72,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn create_from_file_creates_correct_state() {
-        let test_file = "./src/tests/2023-06-07.txt";
+    fn parse_task_file_creates_correct_state() {
+        let filename = "./src/tests/2023-06-07.txt";
 
         let expected_tasks = vec![
             Task::new(String::from("This task is started"), TaskState::Started),
@@ -86,7 +86,18 @@ mod tests {
             tasks: expected_tasks,
         };
 
-        let task_list = TaskList::try_create_from_file(test_file).unwrap();
+        let task_list = parse_task_file(filename).unwrap();
+
+        assert_eq!(task_list, expected_task_list);
+    }
+
+    #[test]
+    fn create_from_file_when_no_file_creates_empty_task_list() {
+        let date = TuduDate::new(2023, 12, 13);
+
+        let expected_task_list = TaskList::empty();
+
+        let task_list = TaskList::try_create_from_file(&date).unwrap();
 
         assert_eq!(task_list, expected_task_list);
     }
