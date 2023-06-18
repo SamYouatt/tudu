@@ -24,6 +24,26 @@ impl TaskList {
     pub fn empty() -> TaskList {
         TaskList { tasks: Vec::new() }
     }
+
+    pub fn try_create_from_file(filename: &str) -> Result<TaskList, TuduError> {
+        let mut file = match File::open(filename) {
+            Ok(file) => file,
+            Err(_) => return Err(TuduError::NoTaskFile),
+        };
+
+        let mut contents = String::new();
+
+        if let Err(_) = file.read_to_string(&mut contents) {
+            return Err(TuduError::FailedToReadFile);
+        }
+
+        let tasks = contents
+            .lines()
+            .map(|line| parse_task_line(line))
+            .collect::<Result<Vec<Task>, TuduError>>()?;
+
+        Ok(TaskList { tasks })
+    }
 }
 
 fn parse_task_line(line: &str) -> Result<Task, TuduError> {
@@ -45,26 +65,6 @@ fn parse_task_line(line: &str) -> Result<Task, TuduError> {
     let task = sections[1].to_owned();
 
     Ok(Task { task, state })
-}
-
-fn parse_task_file(filename: &str) -> Result<TaskList, TuduError> {
-    let mut file = match File::open(filename) {
-        Ok(file) => file,
-        Err(_) => return Err(TuduError::NoTaskFile),
-    };
-
-    let mut contents = String::new();
-
-    if let Err(_) = file.read_to_string(&mut contents) {
-        return Err(TuduError::FailedToReadFile);
-    }
-
-    let tasks = contents
-        .lines()
-        .map(|line| parse_task_line(line))
-        .collect::<Result<Vec<Task>, TuduError>>()?;
-
-    Ok(TaskList { tasks })
 }
 
 #[cfg(test)]
