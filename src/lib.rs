@@ -1,10 +1,11 @@
 use crate::date::TuduDate;
+use crate::error::TuduError;
 use crate::model::{AddCommand, Command, RemoveCommand, SetCommand, TaskState, ViewCommand};
 mod date;
 mod error;
 mod model;
 
-fn parse_add_command(args: Vec<&str>) -> Command {
+fn parse_add_command(args: Vec<&str>) -> Result<Command, TuduError> {
     let task_arg = args[0].to_owned();
 
     if !task_arg.starts_with("\"") && !task_arg.ends_with("\"") {
@@ -25,10 +26,10 @@ fn parse_add_command(args: Vec<&str>) -> Command {
 
     let config = AddCommand { task, date };
 
-    return Command::Add(config);
+    return Ok(Command::Add(config));
 }
 
-fn parse_remove_command(args: Vec<&str>) -> Command {
+fn parse_remove_command(args: Vec<&str>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
         Err(_) => todo!(),
@@ -46,10 +47,10 @@ fn parse_remove_command(args: Vec<&str>) -> Command {
 
     let config = RemoveCommand { index, date };
 
-    return Command::Remove(config);
+    return Ok(Command::Remove(config));
 }
 
-fn parse_set_command(args: Vec<&str>) -> Command {
+fn parse_set_command(args: Vec<&str>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
         Err(_) => todo!(),
@@ -76,10 +77,10 @@ fn parse_set_command(args: Vec<&str>) -> Command {
 
     let config = SetCommand { index, state, date };
 
-    return Command::Set(config);
+    return Ok(Command::Set(config));
 }
 
-fn parse_complete_command(args: Vec<&str>) -> Command {
+fn parse_complete_command(args: Vec<&str>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
         Err(_) => todo!(),
@@ -100,10 +101,10 @@ fn parse_complete_command(args: Vec<&str>) -> Command {
         state: TaskState::Complete,
     };
 
-    return Command::Set(config);
+    return Ok(Command::Set(config));
 }
 
-fn parse_view_command(args: Vec<&str>) -> Command {
+fn parse_view_command(args: Vec<&str>) -> Result<Command, TuduError> {
     if args.len() > 1 {
         todo!();
     }
@@ -115,7 +116,7 @@ fn parse_view_command(args: Vec<&str>) -> Command {
 
     let config = ViewCommand { date };
 
-    return Command::View(config);
+    return Ok(Command::View(config));
 }
 
 fn parse_command(args: Vec<&str>) -> Result<Command, TuduError> {
@@ -123,7 +124,7 @@ fn parse_command(args: Vec<&str>) -> Result<Command, TuduError> {
         let root_config = ViewCommand {
             date: TuduDate::today(),
         };
-        return Command::View(root_config);
+        return Ok(Command::View(root_config));
     }
 
     match args[1] {
