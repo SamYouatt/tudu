@@ -4,6 +4,7 @@ use crate::model::{AddCommand, Command, RemoveCommand, SetCommand, TaskState, Vi
 mod date;
 mod error;
 mod model;
+mod storage;
 
 fn parse_add_command(args: Vec<&str>) -> Result<Command, TuduError> {
     let task_arg = args[0].to_owned();
