@@ -145,12 +145,12 @@ fn parse_command(args: Vec<&str>) -> Result<Command, TuduError> {
     }
 
     match args[1] {
-        "add" => return parse_add_command(args[2..].to_vec()),
-        "remove" => return parse_remove_command(args[2..].to_vec()),
-        "set" => return parse_set_command(args[2..].to_vec()),
-        "complete" => return parse_complete_command(args[2..].to_vec()),
-        "view" => return parse_view_command(args[2..].to_vec()),
-        _ => return Err(TuduError::UnknownCommand),
+        "add" => parse_add_command(args[2..].to_vec()),
+        "remove" => parse_remove_command(args[2..].to_vec()),
+        "set" => parse_set_command(args[2..].to_vec()),
+        "complete" => parse_complete_command(args[2..].to_vec()),
+        "view" => parse_view_command(args[2..].to_vec()),
+        _ => Err(TuduError::UnknownCommand),
     }
 }
 
