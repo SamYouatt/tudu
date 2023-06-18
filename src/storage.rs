@@ -1,3 +1,6 @@
+use std::fs::File;
+use std::io::Read;
+
 use crate::error::TuduError;
 use crate::model::TaskState;
 
@@ -16,6 +19,15 @@ impl Task {
 #[derive(Debug, PartialEq, Eq)]
 struct TaskList {
     tasks: Vec<Task>,
+}
+
+impl TaskList {
+    pub fn empty() -> TaskList {
+        TaskList { tasks: Vec::new() }
+    }
+}
+
+fn parse_task_line(line: &str) -> Result<Task, TuduError> {
 }
 
 fn parse_task_file(filename: &str) -> Result<TaskList, TuduError> {
@@ -44,5 +56,16 @@ mod tests {
         let task_list = parse_task_file(test_file).unwrap();
 
         assert_eq!(task_list, expected_task_list);
+    }
+
+    #[test]
+    fn parse_task_line_creates_correct_task() {
+        let line = "S,This task is started";
+
+        let expected_task = Task::new(String::from("This task is started"), TaskState::Started);
+
+        let task = parse_task_line(line).unwrap();
+
+        assert_eq!(task, expected_task);
     }
 }
