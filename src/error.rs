@@ -1,7 +1,7 @@
 #[derive(Debug)]
-pub enum TuduError<'a> {
+pub enum TuduError {
     InvalidTask,
     InvalidDate,
-    InvalidArguments(&'a str),
+    InvalidArguments(String),
     UnknownCommand,
 }
