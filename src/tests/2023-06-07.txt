@@ -1,0 +1,5 @@
+S,This task is started
+C,This one is completed
+X,Didn't like this one
+F,This one's for later
+N,Patience is a virtue
