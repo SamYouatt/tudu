@@ -80,4 +80,18 @@ mod tests {
 
         assert_eq!(date, expected_date);
     }
+
+    #[test]
+    fn today_gives_todays_date() {
+        let now = Local::now();
+        let day = now.day();
+        let month = now.month();
+        let year: u32 = now.year().try_into().unwrap();
+
+        let date = TuduDate::today();
+
+        assert_eq!(day, date.day);
+        assert_eq!(month, date.month);
+        assert_eq!(year, date.year);
+    }
 }
