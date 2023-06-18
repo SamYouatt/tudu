@@ -147,4 +147,33 @@ mod tests {
 
         assert_eq!(command, expected_command);
     }
+
+    #[test]
+    fn create_remove_command_without_date() {
+        let args = vec!["tudu", "remove", "2"];
+
+        let expected_config = RemoveCommand {
+            index: 2,
+            date: None,
+        };
+        let expected_command = Command::Remove(expected_config);
+
+        let command = parse_command(args);
+
+        assert_eq!(command, expected_command);
+    }
+
+    #[test]
+    fn create_remove_command_with_date() {
+        let args = vec!["tudu", "remove", "2", "10-6-2023"];
+
+        let expected_config = RemoveCommand {
+            index: 2,
+            date: Some(TuduDate::new(10, 6, 2023)),
+        };
+        let expected_command = Command::Remove(expected_config);
+
+        let command = parse_command(args);
+        assert_eq!(command, expected_command);
+    }
 }
