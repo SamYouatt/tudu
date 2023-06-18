@@ -1,58 +1,58 @@
 use crate::date::TuduDate;
+use crate::error::TuduError;
 use crate::model::{AddCommand, Command, RemoveCommand, SetCommand, TaskState, ViewCommand};
 mod date;
 mod error;
 mod model;
 
-fn parse_add_command(args: Vec<&str>) -> Command {
+fn parse_add_command(args: Vec<&str>) -> Result<Command, TuduError> {
     let task_arg = args[0].to_owned();
 
     if !task_arg.starts_with("\"") && !task_arg.ends_with("\"") {
-        // Error here
-        todo!()
+        return Err(TuduError::InvalidTask);
     }
 
     let task = task_arg.replace("\"", "");
 
-    let date = match args.len() {
-        2 => match TuduDate::from_date(args[1]) {
-            Ok(date) => Some(date),
-            Err(_) => todo!(),
-        },
-        1 => None,
-        _ => todo!(),
-    };
+    let date =
+        match args.len() {
+            2 => Some(TuduDate::from_date(args[1])?),
+            1 => None,
+            _ => return Err(TuduError::InvalidArguments(String::from(
+                "`add` accepts a task, e.g. \"Example task\", and an optional date, e.g. 10-6-2023",
+            ))),
+        };
 
     let config = AddCommand { task, date };
 
-    return Command::Add(config);
+    return Ok(Command::Add(config));
 }
 
-fn parse_remove_command(args: Vec<&str>) -> Command {
+fn parse_remove_command(args: Vec<&str>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
-        Err(_) => todo!(),
+        Err(_) => return Err(TuduError::InvalidIndex),
     };
 
     let date = match args.len() {
-        2 => match TuduDate::from_date(args[1]) {
-            Ok(date) => Some(date),
-            Err(_) => todo!(),
-        },
+        2 => Some(TuduDate::from_date(args[1])?),
         1 => None,
-        // TODO: error here
-        _ => todo!(),
+        _ => {
+            return Err(TuduError::InvalidArguments(String::from(
+                "`remove` accepts a task number and an optional date e.g. 10-6-2023",
+            )))
+        }
     };
 
     let config = RemoveCommand { index, date };
 
-    return Command::Remove(config);
+    return Ok(Command::Remove(config));
 }
 
-fn parse_set_command(args: Vec<&str>) -> Command {
+fn parse_set_command(args: Vec<&str>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
-        Err(_) => todo!(),
+        Err(_) => return Err(TuduError::InvalidIndex),
     };
 
     let state = match args.get(1) {
@@ -61,37 +61,41 @@ fn parse_set_command(args: Vec<&str>) -> Command {
         Some(&"S") => TaskState::Started,
         Some(&"F") => TaskState::Forwarded,
         Some(&"X") => TaskState::Ignored,
-        Some(_) => todo!(),
-        None => todo!(),
+        Some(_) => return Err(TuduError::InvalidState),
+        None => {
+            return Err(TuduError::InvalidArguments(String::from(
+                "`set` accepts a task number and a task state, for states see `tudu help`",
+            )))
+        }
     };
 
     let date = match args.len() {
         2 => None,
-        3 => match TuduDate::from_date(args[2]) {
-            Ok(date) => Some(date),
-            Err(_) => todo!(),
-        },
-        _ => todo!(),
+        3 => Some(TuduDate::from_date(args[2])?),
+        _ => return Err(TuduError::InvalidArguments(
+                    String::from("`set` accepts a task number, a task state, and an optional date, e.g. 10-6-2023. For states see `tudu help`")
+                )),
     };
 
     let config = SetCommand { index, state, date };
 
-    return Command::Set(config);
+    return Ok(Command::Set(config));
 }
 
-fn parse_complete_command(args: Vec<&str>) -> Command {
+fn parse_complete_command(args: Vec<&str>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
-        Err(_) => todo!(),
+        Err(_) => return Err(TuduError::InvalidIndex),
     };
 
     let date = match args.len() {
         1 => None,
-        2 => match TuduDate::from_date(args[1]) {
-            Ok(date) => Some(date),
-            Err(_) => todo!(),
-        },
-        _ => todo!(),
+        2 => Some(TuduDate::from_date(args[1])?),
+        _ => {
+            return Err(TuduError::InvalidArguments(String::from(
+                "`complete` accepts a task number and an optional date, e.g. 10-6-2023",
+            )))
+        }
     };
 
     let config = SetCommand {
@@ -100,39 +104,38 @@ fn parse_complete_command(args: Vec<&str>) -> Command {
         state: TaskState::Complete,
     };
 
-    return Command::Set(config);
+    return Ok(Command::Set(config));
 }
 
-fn parse_view_command(args: Vec<&str>) -> Command {
-    if args.len() > 1 {
-        todo!();
+fn parse_view_command(args: Vec<&str>) -> Result<Command, TuduError> {
+    if args.len() < 1 {
+        return Err(TuduError::InvalidArguments(String::from(
+            "`view` accepts a date, e.g. 10-6-2023",
+        )));
     }
 
-    let date = match TuduDate::from_date(args[0]) {
-        Ok(date) => date,
-        Err(_) => todo!(),
-    };
+    let date = TuduDate::from_date(args[0])?;
 
     let config = ViewCommand { date };
 
-    return Command::View(config);
+    return Ok(Command::View(config));
 }
 
-fn parse_command(args: Vec<&str>) -> Command {
+pub fn parse_command(args: Vec<&str>) -> Result<Command, TuduError> {
     if args.len() == 1 {
         let root_config = ViewCommand {
             date: TuduDate::today(),
         };
-        return Command::View(root_config);
+        return Ok(Command::View(root_config));
     }
 
     match args[1] {
-        "add" => return parse_add_command(args[2..].to_vec()),
-        "remove" => return parse_remove_command(args[2..].to_vec()),
-        "set" => return parse_set_command(args[2..].to_vec()),
-        "complete" => return parse_complete_command(args[2..].to_vec()),
-        "view" => return parse_view_command(args[2..].to_vec()),
-        _ => todo!(),
+        "add" => parse_add_command(args[2..].to_vec()),
+        "remove" => parse_remove_command(args[2..].to_vec()),
+        "set" => parse_set_command(args[2..].to_vec()),
+        "complete" => parse_complete_command(args[2..].to_vec()),
+        "view" => parse_view_command(args[2..].to_vec()),
+        _ => Err(TuduError::InvalidCommand),
     }
 }
 
@@ -156,7 +159,7 @@ mod tests {
         };
         let expected_command = Command::View(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -171,7 +174,7 @@ mod tests {
         };
         let expected_command = Command::Add(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -186,7 +189,7 @@ mod tests {
         };
         let expected_command = Command::Add(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -201,7 +204,7 @@ mod tests {
         };
         let expected_command = Command::Remove(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -216,7 +219,7 @@ mod tests {
         };
         let expected_command = Command::Remove(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
         assert_eq!(command, expected_command);
     }
 
@@ -231,7 +234,7 @@ mod tests {
         };
         let expected_command = Command::Set(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -247,7 +250,7 @@ mod tests {
         };
         let expected_command = Command::Set(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -263,7 +266,7 @@ mod tests {
         };
         let expected_command = Command::Set(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -279,7 +282,7 @@ mod tests {
         };
         let expected_command = Command::Set(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
@@ -293,7 +296,7 @@ mod tests {
         };
         let expected_command = Command::View(expected_config);
 
-        let command = parse_command(args);
+        let command = parse_command(args).unwrap();
 
         assert_eq!(command, expected_command);
     }
