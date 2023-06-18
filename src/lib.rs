@@ -9,8 +9,7 @@ fn parse_add_command(args: Vec<&str>) -> Result<Command, TuduError> {
     let task_arg = args[0].to_owned();
 
     if !task_arg.starts_with("\"") && !task_arg.ends_with("\"") {
-        // Error here
-        todo!()
+        return Err(TuduError::InvalidTask);
     }
 
     let task = task_arg.replace("\"", "");
