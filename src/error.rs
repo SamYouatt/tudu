@@ -5,5 +5,5 @@ pub enum TuduError {
     InvalidArguments(String),
     InvalidIndex,
     InvalidState,
-    UnknownCommand,
+    InvalidCommand,
 }
