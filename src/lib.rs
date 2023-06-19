@@ -19,7 +19,7 @@ fn parse_add_command(args: Vec<String>) -> Result<Command, TuduError> {
 
     let date =
         match args.len() {
-            2 => Some(TuduDate::from_date(args[1])?),
+            2 => Some(TuduDate::from_date(args[1].as_str())?),
             1 => None,
             _ => return Err(TuduError::InvalidArguments(String::from(
                 "`add` accepts a task, e.g. \"Example task\", and an optional date, e.g. 10-6-2023",
@@ -38,7 +38,7 @@ fn parse_remove_command(args: Vec<String>) -> Result<Command, TuduError> {
     };
 
     let date = match args.len() {
-        2 => Some(TuduDate::from_date(args[1])?),
+        2 => Some(TuduDate::from_date(args[1].as_str())?),
         1 => None,
         _ => {
             return Err(TuduError::InvalidArguments(String::from(
@@ -58,13 +58,8 @@ fn parse_set_command(args: Vec<String>) -> Result<Command, TuduError> {
         Err(_) => return Err(TuduError::InvalidIndex),
     };
 
-    let state = match args.get(1) {
-        Some(&"C") => TaskState::Complete,
-        Some(&"N") => TaskState::NotStarted,
-        Some(&"S") => TaskState::Started,
-        Some(&"F") => TaskState::Forwarded,
-        Some(&"X") => TaskState::Ignored,
-        Some(_) => return Err(TuduError::InvalidState),
+    let arg_as_str = match args.get(1) {
+        Some(value) => value.as_str(),
         None => {
             return Err(TuduError::InvalidArguments(String::from(
                 "`set` accepts a task number and a task state, for states see `tudu help`",
@@ -72,9 +67,18 @@ fn parse_set_command(args: Vec<String>) -> Result<Command, TuduError> {
         }
     };
 
+    let state = match arg_as_str {
+        "C" => TaskState::Complete,
+        "N" => TaskState::NotStarted,
+        "S" => TaskState::Started,
+        "F" => TaskState::Forwarded,
+        "X" => TaskState::Ignored,
+        _ => return Err(TuduError::InvalidState),
+    };
+
     let date = match args.len() {
         2 => None,
-        3 => Some(TuduDate::from_date(args[2])?),
+        3 => Some(TuduDate::from_date(args[2].as_str())?),
         _ => return Err(TuduError::InvalidArguments(
                     String::from("`set` accepts a task number, a task state, and an optional date, e.g. 10-6-2023. For states see `tudu help`")
                 )),
@@ -93,7 +97,7 @@ fn parse_complete_command(args: Vec<String>) -> Result<Command, TuduError> {
 
     let date = match args.len() {
         1 => None,
-        2 => Some(TuduDate::from_date(args[1])?),
+        2 => Some(TuduDate::from_date(args[1].as_str())?),
         _ => {
             return Err(TuduError::InvalidArguments(String::from(
                 "`complete` accepts a task number and an optional date, e.g. 10-6-2023",
@@ -136,7 +140,7 @@ fn parse_view_command(args: Vec<String>) -> Result<Command, TuduError> {
         )));
     }
 
-    let date = TuduDate::from_date(args[0])?;
+    let date = TuduDate::from_date(args[0].as_str())?;
 
     let config = ViewCommand { date };
 
@@ -151,7 +155,7 @@ fn parse_command(args: Vec<String>) -> Result<Command, TuduError> {
         return Ok(Command::View(root_config));
     }
 
-    match args[1] {
+    match args[1].as_str() {
         "add" => parse_add_command(args[2..].to_vec()),
         "remove" => parse_remove_command(args[2..].to_vec()),
         "set" => parse_set_command(args[2..].to_vec()),
