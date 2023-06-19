@@ -1,4 +1,4 @@
-use crate::storage::{parse_task_file, write_tasks_to_file};
+use crate::storage::{create_filepath, parse_task_file, write_tasks_to_file};
 use crate::TuduDate;
 use crate::TuduError;
 
@@ -121,7 +121,9 @@ impl TaskList<'_> {
     fn write_to_file(&self) -> Result<(), TuduError> {
         let filename = self.date.to_filename();
 
-        write_tasks_to_file(&filename, &self.tasks)
+        let filepath = create_filepath(&filename)?;
+
+        write_tasks_to_file(&filepath, &self.tasks)
     }
 }
 
