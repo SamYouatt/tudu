@@ -78,8 +78,8 @@ impl TaskList<'_> {
         }
     }
 
-    pub fn add_task(&self, new_task: Task) -> Result<(), TuduError> {
-        todo!()
+    pub fn add_task(&mut self, new_task: Task) {
+        self.tasks.push(new_task);
     }
 
     fn empty(date: &TuduDate) -> TaskList {
