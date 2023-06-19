@@ -10,7 +10,7 @@ pub enum Command {
     View(ViewCommand),
 }
 
-#[derive(Eq, PartialEq, Debug)]
+#[derive(Eq, PartialEq, Debug, Clone)]
 pub enum TaskState {
     NotStarted,
     Started,
@@ -49,7 +49,7 @@ pub struct ViewCommand {
     pub date: TuduDate,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Task {
     pub task: String,
     pub state: TaskState,
@@ -76,6 +76,10 @@ impl TaskList<'_> {
             Err(TuduError::NoTaskFile) => Ok(TaskList::empty(date)),
             Err(err) => Err(err),
         }
+    }
+
+    pub fn add_task(&self, new_task: Task) -> Result<(), TuduError> {
+        todo!()
     }
 
     fn empty(date: &TuduDate) -> TaskList {
@@ -105,5 +109,26 @@ mod tests {
         let task_list = TaskList::for_date(&date).unwrap();
 
         assert_eq!(task_list, expected_task_list);
+    }
+
+    #[test]
+    fn add_task_adds_task_to_end_of_list() {
+        let date = TuduDate::new(1, 1, 2023);
+        let first_task = Task::new(String::from("First task"), TaskState::Complete);
+        let second_task = Task::new(String::from("Second task"), TaskState::NotStarted);
+
+        let expected_task_list = TaskList {
+            date: &date,
+            tasks: vec![first_task.clone(), second_task.clone()],
+        };
+
+        let task_list = TaskList {
+            date: &date,
+            tasks: vec![first_task.clone()],
+        };
+
+        task_list.add_task(second_task.clone()).unwrap();
+
+        assert_eq!(task_list.tasks, expected_task_list.tasks);
     }
 }
