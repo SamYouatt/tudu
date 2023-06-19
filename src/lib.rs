@@ -174,7 +174,7 @@ mod tests {
 
     #[test]
     fn create_root_command_from_no_args() {
-        let args = vec!["tudu"];
+        let args = vec![String::from("tudu")];
 
         let now: DateTime<Local> = Local::now();
         let day = now.day();
@@ -193,7 +193,11 @@ mod tests {
 
     #[test]
     fn create_add_command_with_only_task_when_no_date() {
-        let args = vec!["tudu", "add", "\"Example task\""];
+        let args = vec![
+            String::from("tudu"),
+            String::from("add"),
+            String::from("\"Example task\""),
+        ];
 
         let expected_config = AddCommand {
             task: String::from("Example task"),
@@ -208,7 +212,12 @@ mod tests {
 
     #[test]
     fn create_add_command_with_date_when_given() {
-        let args = vec!["tudu", "add", "\"Example task\"", "10-6-2023"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("add"),
+            String::from("\"Example task\""),
+            String::from("10-6-2023"),
+        ];
 
         let expected_config = AddCommand {
             task: String::from("Example task"),
@@ -223,7 +232,11 @@ mod tests {
 
     #[test]
     fn create_remove_command_without_date() {
-        let args = vec!["tudu", "remove", "2"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("remove"),
+            String::from("2"),
+        ];
 
         let expected_config = RemoveCommand {
             index: 2,
@@ -238,7 +251,12 @@ mod tests {
 
     #[test]
     fn create_remove_command_with_date() {
-        let args = vec!["tudu", "remove", "2", "10-6-2023"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("remove"),
+            String::from("2"),
+            String::from("10-6-2023"),
+        ];
 
         let expected_config = RemoveCommand {
             index: 2,
@@ -252,7 +270,12 @@ mod tests {
 
     #[test]
     fn create_set_command_without_date() {
-        let args = vec!["tudu", "set", "3", "S"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("set"),
+            String::from("3"),
+            String::from("S"),
+        ];
 
         let expected_config = SetCommand {
             index: 3,
@@ -268,7 +291,13 @@ mod tests {
 
     #[test]
     fn create_set_command_with_date() {
-        let args = vec!["tudu", "set", "3", "X", "10-6-2023"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("set"),
+            String::from("3"),
+            String::from("X"),
+            String::from("10-6-2023"),
+        ];
 
         let expected_config = SetCommand {
             index: 3,
@@ -284,7 +313,11 @@ mod tests {
 
     #[test]
     fn create_complete_command_without_date() {
-        let args = vec!["tudu", "complete", "2"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("complete"),
+            String::from("2"),
+        ];
 
         let expected_config = SetCommand {
             index: 2,
@@ -300,7 +333,12 @@ mod tests {
 
     #[test]
     fn create_complete_command_with_date() {
-        let args = vec!["tudu", "complete", "3", "10-6-2023"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("complete"),
+            String::from("3"),
+            String::from("10-6-2023"),
+        ];
 
         let expected_config = SetCommand {
             index: 3,
@@ -316,7 +354,11 @@ mod tests {
 
     #[test]
     fn create_view_command_with_date() {
-        let args = vec!["tudu", "view", "10-6-2023"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("view"),
+            String::from("10-6-2023"),
+        ];
 
         let expected_config = ViewCommand {
             date: TuduDate::new(10, 6, 2023),
@@ -330,7 +372,12 @@ mod tests {
 
     #[test]
     fn create_edit_command() {
-        let args = vec!["tudu", "edit", "2", "\"Updated task\""];
+        let args = vec![
+            String::from("tudu"),
+            String::from("edit"),
+            String::from("2"),
+            String::from("\"Updated task\""),
+        ];
 
         let expected_config = EditCommand {
             index: 2,
