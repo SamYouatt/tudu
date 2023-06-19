@@ -1,5 +1,6 @@
 use crate::error::TuduError;
 use crate::model::{Task, TaskState};
+use std::env;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
 use std::path::PathBuf;
@@ -43,6 +44,21 @@ fn parse_task_line(line: &str) -> Result<Task, TuduError> {
     let task = sections[1].to_owned();
 
     Ok(Task { task, state })
+}
+
+pub fn create_filepath(filename: &str) -> Result<PathBuf, TuduError> {
+    let tasks_directory = match env::var("TUDU_ERROR") {
+        Ok(path) => path,
+        Err(env::VarError::NotPresent) => {
+            let home = env::var("HOME").expect("Unable to find HOME environment variable");
+            format!("{home}/.tudu")
+        }
+        Err(_) => return Err(TuduError::InvalidTaskDirectory),
+    };
+
+    let filepath = PathBuf::from(format!("{tasks_directory}/{filename}"));
+
+    Ok(filepath)
 }
 
 pub fn write_tasks_to_file(filename: &PathBuf, tasks: &Vec<Task>) -> Result<(), TuduError> {
