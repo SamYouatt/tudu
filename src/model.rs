@@ -95,8 +95,10 @@ impl TaskList<'_> {
         }
     }
 
-    pub fn remove_task(&mut self, index: usize) -> Result<(), TuduError> {
-        todo!()
+    pub fn remove_task(&mut self, index: usize) {
+        let corrected_index = index - 1;
+
+        self.tasks.remove(corrected_index);
     }
 
     fn empty(date: &TuduDate) -> TaskList {
@@ -206,7 +208,7 @@ mod tests {
             tasks: vec![first_task, second_task],
         };
 
-        task_list.remove_task(2).unwrap();
+        task_list.remove_task(2);
 
         assert_eq!(task_list.tasks, expected_task_list.tasks);
     }
