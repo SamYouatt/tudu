@@ -1,9 +1,9 @@
-use tudu::parse_command;
+use std::env;
+
+use tudu::run;
 
 fn main() {
-    println!("Hello, world!");
+    let args: Vec<String> = env::args().collect();
 
-    let args = vec!["tudu"];
-
-    parse_command(args).expect("oops");
+    run(args);
 }

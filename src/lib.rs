@@ -143,7 +143,7 @@ fn parse_view_command(args: Vec<&str>) -> Result<Command, TuduError> {
     return Ok(Command::View(config));
 }
 
-pub fn parse_command(args: Vec<&str>) -> Result<Command, TuduError> {
+fn parse_command(args: Vec<&str>) -> Result<Command, TuduError> {
     if args.len() == 1 {
         let root_config = ViewCommand {
             date: TuduDate::today(),
@@ -160,6 +160,10 @@ pub fn parse_command(args: Vec<&str>) -> Result<Command, TuduError> {
         "edit" => parse_edit_command(args[2..].to_vec()),
         _ => Err(TuduError::InvalidCommand),
     }
+}
+
+pub fn run(args: Vec<&str>) {
+    todo!()
 }
 
 #[cfg(test)]
