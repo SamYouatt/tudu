@@ -40,6 +40,12 @@ impl TaskList<'_> {
             Err(err) => Err(err),
         }
     }
+
+    fn write_to_file(self) -> Result<(), TuduError> {
+        let filename = self.date.to_filename();
+
+        write_tasks_to_file(&filename, &self.tasks)
+    }
 }
 
 fn parse_task_file(filename: &str) -> Result<Vec<Task>, TuduError> {
