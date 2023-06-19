@@ -8,7 +8,7 @@ mod error;
 mod model;
 mod storage;
 
-fn parse_add_command(args: Vec<&str>) -> Result<Command, TuduError> {
+fn parse_add_command(args: Vec<String>) -> Result<Command, TuduError> {
     let task_arg = args[0].to_owned();
 
     if !task_arg.starts_with("\"") && !task_arg.ends_with("\"") {
@@ -31,7 +31,7 @@ fn parse_add_command(args: Vec<&str>) -> Result<Command, TuduError> {
     return Ok(Command::Add(config));
 }
 
-fn parse_remove_command(args: Vec<&str>) -> Result<Command, TuduError> {
+fn parse_remove_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
         Err(_) => return Err(TuduError::InvalidIndex),
@@ -52,7 +52,7 @@ fn parse_remove_command(args: Vec<&str>) -> Result<Command, TuduError> {
     return Ok(Command::Remove(config));
 }
 
-fn parse_set_command(args: Vec<&str>) -> Result<Command, TuduError> {
+fn parse_set_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
         Err(_) => return Err(TuduError::InvalidIndex),
@@ -85,7 +85,7 @@ fn parse_set_command(args: Vec<&str>) -> Result<Command, TuduError> {
     return Ok(Command::Set(config));
 }
 
-fn parse_complete_command(args: Vec<&str>) -> Result<Command, TuduError> {
+fn parse_complete_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
         Err(_) => return Err(TuduError::InvalidIndex),
@@ -110,7 +110,7 @@ fn parse_complete_command(args: Vec<&str>) -> Result<Command, TuduError> {
     return Ok(Command::Set(config));
 }
 
-fn parse_edit_command(args: Vec<&str>) -> Result<Command, TuduError> {
+fn parse_edit_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
         Err(_) => return Err(TuduError::InvalidIndex),
@@ -129,7 +129,7 @@ fn parse_edit_command(args: Vec<&str>) -> Result<Command, TuduError> {
     return Ok(Command::Edit(config));
 }
 
-fn parse_view_command(args: Vec<&str>) -> Result<Command, TuduError> {
+fn parse_view_command(args: Vec<String>) -> Result<Command, TuduError> {
     if args.len() < 1 {
         return Err(TuduError::InvalidArguments(String::from(
             "`view` accepts a date, e.g. 10-6-2023",
@@ -143,7 +143,7 @@ fn parse_view_command(args: Vec<&str>) -> Result<Command, TuduError> {
     return Ok(Command::View(config));
 }
 
-fn parse_command(args: Vec<&str>) -> Result<Command, TuduError> {
+fn parse_command(args: Vec<String>) -> Result<Command, TuduError> {
     if args.len() == 1 {
         let root_config = ViewCommand {
             date: TuduDate::today(),
@@ -162,8 +162,8 @@ fn parse_command(args: Vec<&str>) -> Result<Command, TuduError> {
     }
 }
 
-pub fn run(args: Vec<&str>) {
-    todo!()
+pub fn run(args: Vec<String>) {
+    let command = parse_command(args);
 }
 
 #[cfg(test)]
