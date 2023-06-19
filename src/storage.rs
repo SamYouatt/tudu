@@ -17,8 +17,9 @@ impl Task {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-struct TaskList {
+struct TaskList<'a> {
     tasks: Vec<Task>,
+    date: &'a TuduDate,
 }
 
 impl TaskList {
@@ -93,20 +94,17 @@ mod tests {
             Task::new(String::from("This one's for later"), TaskState::Forwarded),
             Task::new(String::from("Patience is a virtue"), TaskState::NotStarted),
         ];
-        let expected_task_list = TaskList {
-            tasks: expected_tasks,
-        };
 
-        let task_list = parse_task_file(filename).unwrap();
+        let tasks = parse_task_file(filename).unwrap();
 
-        assert_eq!(task_list, expected_task_list);
+        assert_eq!(tasks, expected_tasks);
     }
 
     #[test]
     fn create_from_file_when_no_file_creates_empty_task_list() {
         let date = TuduDate::new(2023, 12, 13);
 
-        let expected_task_list = TaskList::empty();
+        let expected_task_list = TaskList::empty(&date);
 
         let task_list = TaskList::for_date(&date).unwrap();
 
