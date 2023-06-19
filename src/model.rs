@@ -122,12 +122,12 @@ mod tests {
             tasks: vec![first_task.clone(), second_task.clone()],
         };
 
-        let task_list = TaskList {
+        let mut task_list = TaskList {
             date: &date,
             tasks: vec![first_task.clone()],
         };
 
-        task_list.add_task(second_task.clone()).unwrap();
+        task_list.add_task(second_task.clone());
 
         assert_eq!(task_list.tasks, expected_task_list.tasks);
     }
