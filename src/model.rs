@@ -102,8 +102,13 @@ impl TaskList<'_> {
         self.tasks.remove(corrected_index);
     }
 
-    pub fn edit_task(&mut self, index: usize, task: String) -> Result<(), TuduError> {
-        todo!()
+    pub fn edit_task(&mut self, index: usize, new_task: String) -> Result<(), TuduError> {
+        let corrected_index = index - 1;
+
+        match self.tasks.get_mut(corrected_index) {
+            Some(task) => Ok(task.task = new_task),
+            None => Err(TuduError::InvalidIndex),
+        }
     }
 
     fn empty(date: &TuduDate) -> TaskList {
