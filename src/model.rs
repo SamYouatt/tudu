@@ -68,13 +68,6 @@ pub struct TaskList<'a> {
 }
 
 impl TaskList<'_> {
-    pub fn empty(date: &TuduDate) -> TaskList {
-        TaskList {
-            tasks: Vec::new(),
-            date,
-        }
-    }
-
     pub fn for_date(date: &TuduDate) -> Result<TaskList, TuduError> {
         let filename = date.to_filename();
 
@@ -82,6 +75,13 @@ impl TaskList<'_> {
             Ok(tasks) => Ok(TaskList { tasks, date }),
             Err(TuduError::NoTaskFile) => Ok(TaskList::empty(date)),
             Err(err) => Err(err),
+        }
+    }
+
+    fn empty(date: &TuduDate) -> TaskList {
+        TaskList {
+            tasks: Vec::new(),
+            date,
         }
     }
 
