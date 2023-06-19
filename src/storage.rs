@@ -22,23 +22,26 @@ struct TaskList<'a> {
     date: &'a TuduDate,
 }
 
-impl TaskList {
-    pub fn empty() -> TaskList {
-        TaskList { tasks: Vec::new() }
+impl TaskList<'_> {
+    pub fn empty(date: &TuduDate) -> TaskList {
+        TaskList {
+            tasks: Vec::new(),
+            date,
+        }
     }
 
     pub fn for_date(date: &TuduDate) -> Result<TaskList, TuduError> {
         let filename = date.to_filename();
 
         match parse_task_file(&filename) {
-            Ok(task_list) => Ok(task_list),
-            Err(TuduError::NoTaskFile) => Ok(TaskList::empty()),
+            Ok(tasks) => Ok(TaskList { tasks, date }),
+            Err(TuduError::NoTaskFile) => Ok(TaskList::empty(date)),
             Err(err) => Err(err),
         }
     }
 }
 
-fn parse_task_file(filename: &str) -> Result<TaskList, TuduError> {
+fn parse_task_file(filename: &str) -> Result<Vec<Task>, TuduError> {
     let mut file = match File::open(filename) {
         Ok(file) => file,
         Err(_) => return Err(TuduError::NoTaskFile),
@@ -55,7 +58,7 @@ fn parse_task_file(filename: &str) -> Result<TaskList, TuduError> {
         .map(|line| parse_task_line(line))
         .collect::<Result<Vec<Task>, TuduError>>()?;
 
-    Ok(TaskList { tasks })
+    Ok(tasks)
 }
 
 fn parse_task_line(line: &str) -> Result<Task, TuduError> {
