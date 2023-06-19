@@ -1,6 +1,8 @@
 use crate::date::TuduDate;
 use crate::error::TuduError;
-use crate::model::{AddCommand, Command, RemoveCommand, SetCommand, TaskState, ViewCommand};
+use crate::model::{
+    AddCommand, Command, EditCommand, RemoveCommand, SetCommand, TaskState, ViewCommand,
+};
 mod date;
 mod error;
 mod model;
@@ -296,6 +298,21 @@ mod tests {
             date: TuduDate::new(10, 6, 2023),
         };
         let expected_command = Command::View(expected_config);
+
+        let command = parse_command(args).unwrap();
+
+        assert_eq!(command, expected_command);
+    }
+
+    #[test]
+    fn create_edit_command() {
+        let args = vec!["tudu", "edit", "2", "\"Updated task\""];
+
+        let expected_config = EditCommand {
+            index: 2,
+            task: String::from("Updated task"),
+        };
+        let expected_command = Command::Edit(expected_config);
 
         let command = parse_command(args).unwrap();
 
