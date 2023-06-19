@@ -40,12 +40,6 @@ pub struct SetCommand {
 }
 
 #[derive(Eq, PartialEq, Debug)]
-pub struct CompleteCommand {
-    pub index: usize,
-    pub date: Option<TuduDate>,
-}
-
-#[derive(Eq, PartialEq, Debug)]
 pub struct ViewCommand {
     pub date: TuduDate,
 }
