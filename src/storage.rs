@@ -1,54 +1,9 @@
-use crate::date::TuduDate;
 use crate::error::TuduError;
-use crate::model::TaskState;
-use std::error::Error;
+use crate::model::{Task, TaskState};
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
 
-#[derive(Debug, PartialEq, Eq)]
-struct Task {
-    task: String,
-    state: TaskState,
-}
-
-impl Task {
-    pub fn new(task: String, state: TaskState) -> Task {
-        Task { task, state }
-    }
-}
-
-#[derive(Debug, PartialEq, Eq)]
-struct TaskList<'a> {
-    tasks: Vec<Task>,
-    date: &'a TuduDate,
-}
-
-impl TaskList<'_> {
-    pub fn empty(date: &TuduDate) -> TaskList {
-        TaskList {
-            tasks: Vec::new(),
-            date,
-        }
-    }
-
-    pub fn for_date(date: &TuduDate) -> Result<TaskList, TuduError> {
-        let filename = date.to_filename();
-
-        match parse_task_file(&filename) {
-            Ok(tasks) => Ok(TaskList { tasks, date }),
-            Err(TuduError::NoTaskFile) => Ok(TaskList::empty(date)),
-            Err(err) => Err(err),
-        }
-    }
-
-    fn write_to_file(self) -> Result<(), TuduError> {
-        let filename = self.date.to_filename();
-
-        write_tasks_to_file(&filename, &self.tasks)
-    }
-}
-
-fn parse_task_file(filename: &str) -> Result<Vec<Task>, TuduError> {
+pub fn parse_task_file(filename: &str) -> Result<Vec<Task>, TuduError> {
     let mut file = match File::open(filename) {
         Ok(file) => file,
         Err(_) => return Err(TuduError::NoTaskFile),
@@ -89,7 +44,7 @@ fn parse_task_line(line: &str) -> Result<Task, TuduError> {
     Ok(Task { task, state })
 }
 
-fn write_tasks_to_file(filename: &str, tasks: &Vec<Task>) -> Result<(), TuduError> {
+pub fn write_tasks_to_file(filename: &str, tasks: &Vec<Task>) -> Result<(), TuduError> {
     let mut file = match OpenOptions::new()
         .write(true)
         .truncate(true)
@@ -140,17 +95,6 @@ mod tests {
         let tasks = parse_task_file(filename).unwrap();
 
         assert_eq!(tasks, expected_tasks);
-    }
-
-    #[test]
-    fn create_from_file_when_no_file_creates_empty_task_list() {
-        let date = TuduDate::new(2023, 12, 13);
-
-        let expected_task_list = TaskList::empty(&date);
-
-        let task_list = TaskList::for_date(&date).unwrap();
-
-        assert_eq!(task_list, expected_task_list);
     }
 
     #[test]
