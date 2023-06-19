@@ -7,6 +7,7 @@ pub enum Command {
     Add(AddCommand),
     Remove(RemoveCommand),
     Set(SetCommand),
+    Edit(EditCommand),
     View(ViewCommand),
 }
 
@@ -39,14 +40,14 @@ pub struct SetCommand {
 }
 
 #[derive(Eq, PartialEq, Debug)]
-pub struct CompleteCommand {
-    pub index: usize,
-    pub date: Option<TuduDate>,
+pub struct ViewCommand {
+    pub date: TuduDate,
 }
 
 #[derive(Eq, PartialEq, Debug)]
-pub struct ViewCommand {
-    pub date: TuduDate,
+pub struct EditCommand {
+    pub index: usize,
+    pub task: String,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
@@ -99,6 +100,15 @@ impl TaskList<'_> {
         let corrected_index = index - 1;
 
         self.tasks.remove(corrected_index);
+    }
+
+    pub fn edit_task(&mut self, index: usize, new_task: String) -> Result<(), TuduError> {
+        let corrected_index = index - 1;
+
+        match self.tasks.get_mut(corrected_index) {
+            Some(task) => Ok(task.task = new_task),
+            None => Err(TuduError::InvalidIndex),
+        }
     }
 
     fn empty(date: &TuduDate) -> TaskList {
@@ -211,5 +221,46 @@ mod tests {
         task_list.remove_task(2);
 
         assert_eq!(task_list.tasks, expected_task_list.tasks);
+    }
+
+    #[test]
+    fn edit_task_at_index_edits_that_task() {
+        let date = TuduDate::new(1, 1, 2023);
+        let first_task = Task::new(String::from("AAA"), TaskState::Complete);
+        let second_task = Task::new(String::from("BBB"), TaskState::Complete);
+
+        let expected_task_list = TaskList {
+            tasks: vec![first_task.clone(), second_task.clone()],
+            date: &date,
+        };
+
+        let mut task_list = TaskList {
+            date: &date,
+            tasks: vec![
+                first_task.clone(),
+                Task::new(String::from("CCC"), TaskState::Complete),
+            ],
+        };
+
+        task_list.edit_task(2, String::from("BBB")).unwrap();
+
+        assert_eq!(task_list.tasks, expected_task_list.tasks);
+    }
+
+    #[test]
+    fn edit_task_at_index_if_no_task_at_index_throws_error() {
+        let date = TuduDate::new(1, 1, 2023);
+
+        let mut task_list = TaskList {
+            date: &date,
+            tasks: vec![Task::new(String::from("AAA"), TaskState::NotStarted)],
+        };
+
+        let expected_error = TuduError::InvalidIndex;
+
+        let result = task_list.edit_task(2, String::from("BBB"));
+
+        assert!(result.is_err());
+        assert_eq!(result.err().unwrap(), expected_error);
     }
 }

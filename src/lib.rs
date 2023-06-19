@@ -1,6 +1,8 @@
 use crate::date::TuduDate;
 use crate::error::TuduError;
-use crate::model::{AddCommand, Command, RemoveCommand, SetCommand, TaskState, ViewCommand};
+use crate::model::{
+    AddCommand, Command, EditCommand, RemoveCommand, SetCommand, TaskState, ViewCommand,
+};
 mod date;
 mod error;
 mod model;
@@ -108,6 +110,25 @@ fn parse_complete_command(args: Vec<&str>) -> Result<Command, TuduError> {
     return Ok(Command::Set(config));
 }
 
+fn parse_edit_command(args: Vec<&str>) -> Result<Command, TuduError> {
+    let index = match args[0].parse::<usize>() {
+        Ok(index) => index,
+        Err(_) => return Err(TuduError::InvalidIndex),
+    };
+
+    let task_arg = args[1].to_owned();
+
+    if !task_arg.starts_with("\"") && !task_arg.ends_with("\"") {
+        return Err(TuduError::InvalidTask);
+    }
+
+    let task = task_arg.replace("\"", "");
+
+    let config = EditCommand { index, task };
+
+    return Ok(Command::Edit(config));
+}
+
 fn parse_view_command(args: Vec<&str>) -> Result<Command, TuduError> {
     if args.len() < 1 {
         return Err(TuduError::InvalidArguments(String::from(
@@ -136,6 +157,7 @@ pub fn parse_command(args: Vec<&str>) -> Result<Command, TuduError> {
         "set" => parse_set_command(args[2..].to_vec()),
         "complete" => parse_complete_command(args[2..].to_vec()),
         "view" => parse_view_command(args[2..].to_vec()),
+        "edit" => parse_edit_command(args[2..].to_vec()),
         _ => Err(TuduError::InvalidCommand),
     }
 }
@@ -296,6 +318,21 @@ mod tests {
             date: TuduDate::new(10, 6, 2023),
         };
         let expected_command = Command::View(expected_config);
+
+        let command = parse_command(args).unwrap();
+
+        assert_eq!(command, expected_command);
+    }
+
+    #[test]
+    fn create_edit_command() {
+        let args = vec!["tudu", "edit", "2", "\"Updated task\""];
+
+        let expected_config = EditCommand {
+            index: 2,
+            task: String::from("Updated task"),
+        };
+        let expected_command = Command::Edit(expected_config);
 
         let command = parse_command(args).unwrap();
 
