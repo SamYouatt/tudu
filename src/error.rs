@@ -10,4 +10,5 @@ pub enum TuduError {
     FailedToReadFile,
     FailedToWriteFile,
     BadTaskFormat,
+    InvalidTaskDirectory,
 }

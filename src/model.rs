@@ -1,3 +1,6 @@
+use std::env;
+use std::path::PathBuf;
+
 use crate::storage::{parse_task_file, write_tasks_to_file};
 use crate::TuduDate;
 use crate::TuduError;
@@ -111,7 +114,18 @@ impl TaskList<'_> {
     fn write_to_file(&self) -> Result<(), TuduError> {
         let filename = self.date.to_filename();
 
-        write_tasks_to_file(&filename, &self.tasks)
+        let tasks_directory = match env::var("TUDU_ERROR") {
+            Ok(path) => path,
+            Err(env::VarError::NotPresent) => {
+                let home = env::var("HOME").expect("Unable to find HOME environment variable");
+                format!("{home}/.tudu")
+            }
+            Err(_) => return Err(TuduError::InvalidTaskDirectory),
+        };
+
+        let filepath = PathBuf::from(format!("{tasks_directory}/{filename}"));
+
+        write_tasks_to_file(&filepath, &self.tasks)
     }
 }
 
