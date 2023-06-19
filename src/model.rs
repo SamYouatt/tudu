@@ -82,8 +82,17 @@ impl TaskList<'_> {
         self.tasks.push(new_task);
     }
 
-    pub fn set_task_state(&mut self, index: u32, state: TaskState) -> Result<(), TuduError> {
-        todo!()
+    pub fn set_task_state(
+        &mut self,
+        index: usize,
+        desired_state: TaskState,
+    ) -> Result<(), TuduError> {
+        let corrected_index = index - 1;
+
+        match self.tasks.get_mut(corrected_index) {
+            Some(task) => Ok(task.state = desired_state),
+            None => Err(TuduError::InvalidIndex),
+        }
     }
 
     fn empty(date: &TuduDate) -> TaskList {
