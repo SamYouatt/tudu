@@ -2,6 +2,7 @@ use crate::error::TuduError;
 use crate::model::{Task, TaskState};
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
+use std::path::PathBuf;
 
 pub fn parse_task_file(filename: &str) -> Result<Vec<Task>, TuduError> {
     let mut file = match File::open(filename) {
@@ -44,7 +45,7 @@ fn parse_task_line(line: &str) -> Result<Task, TuduError> {
     Ok(Task { task, state })
 }
 
-pub fn write_tasks_to_file(filename: &str, tasks: &Vec<Task>) -> Result<(), TuduError> {
+pub fn write_tasks_to_file(filename: &PathBuf, tasks: &Vec<Task>) -> Result<(), TuduError> {
     let mut file = match OpenOptions::new()
         .write(true)
         .truncate(true)
@@ -127,7 +128,7 @@ F,This one's for later
 N,Patience is a virtue
 ";
 
-        write_tasks_to_file(filename, &tasks).unwrap();
+        write_tasks_to_file(&PathBuf::from(filename), &tasks).unwrap();
 
         let mut file = File::open(filename).unwrap();
         let mut contents = String::new();
