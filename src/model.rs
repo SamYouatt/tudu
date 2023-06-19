@@ -111,6 +111,9 @@ impl TaskList<'_> {
         }
     }
 
+    pub fn get_formatted_tasks(&self) -> String {
+    }
+
     fn empty(date: &TuduDate) -> TaskList {
         TaskList {
             tasks: Vec::new(),
@@ -264,5 +267,33 @@ mod tests {
 
         assert!(result.is_err());
         assert_eq!(result.err().unwrap(), expected_error);
+    }
+
+    #[test]
+    fn get_formatted_tasks_formats_tasks_correctly() {
+        let tasks = vec![
+            Task::new(String::from("This task is started"), TaskState::Started),
+            Task::new(String::from("This one is completed"), TaskState::Complete),
+            Task::new(String::from("Didn't like this one"), TaskState::Ignored),
+            Task::new(String::from("This one's for later"), TaskState::Forwarded),
+            Task::new(String::from("Patience is a virtue"), TaskState::NotStarted),
+        ];
+
+        let task_list = TaskList {
+            date: &TuduDate::new(1, 1, 2023),
+            tasks,
+        };
+
+        let expected_formatting = String::from(
+            "1    ◐ - This task is started
+2    ● - This one is completed
+3    x - Didn't like this one
+4    ► - This one's for later
+5    ◯ - Patience is a virtue\n",
+        );
+
+        let formatted = task_list.get_formatted_tasks();
+
+        assert_eq!(formatted, expected_formatting);
     }
 }
