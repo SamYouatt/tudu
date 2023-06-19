@@ -1,11 +1,9 @@
-use crate::date::TuduDate;
 use crate::error::TuduError;
-use crate::model::TaskState;
-use std::error::Error;
+use crate::model::{Task, TaskState};
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
 
-fn parse_task_file(filename: &str) -> Result<Vec<Task>, TuduError> {
+pub fn parse_task_file(filename: &str) -> Result<Vec<Task>, TuduError> {
     let mut file = match File::open(filename) {
         Ok(file) => file,
         Err(_) => return Err(TuduError::NoTaskFile),
@@ -46,7 +44,7 @@ fn parse_task_line(line: &str) -> Result<Task, TuduError> {
     Ok(Task { task, state })
 }
 
-fn write_tasks_to_file(filename: &str, tasks: &Vec<Task>) -> Result<(), TuduError> {
+pub fn write_tasks_to_file(filename: &str, tasks: &Vec<Task>) -> Result<(), TuduError> {
     let mut file = match OpenOptions::new()
         .write(true)
         .truncate(true)
