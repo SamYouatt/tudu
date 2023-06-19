@@ -83,7 +83,7 @@ fn parse_task_line(line: &str) -> Result<Task, TuduError> {
     Ok(Task { task, state })
 }
 
-fn write_tasks_to_file(filename: &str, tasks: &Vec<Task>) -> Result<(), Box<dyn Error>> {
+fn write_tasks_to_file(filename: &str, tasks: &Vec<Task>) -> Result<(), TuduError> {
     let mut file = match OpenOptions::new()
         .write(true)
         .truncate(true)
@@ -91,7 +91,7 @@ fn write_tasks_to_file(filename: &str, tasks: &Vec<Task>) -> Result<(), Box<dyn 
         .open(filename)
     {
         Ok(f) => f,
-        Err(err) => return Err(Box::new(err)),
+        Err(_) => return Err(TuduError::FailedToWriteFile),
     };
 
     let lines = tasks.iter().map(|task| {
@@ -107,8 +107,8 @@ fn write_tasks_to_file(filename: &str, tasks: &Vec<Task>) -> Result<(), Box<dyn 
     });
 
     for line in lines {
-        if let Err(err) = file.write_all(line.as_bytes()) {
-            return Err(Box::new(err));
+        if let Err(_) = file.write_all(line.as_bytes()) {
+            return Err(TuduError::FailedToWriteFile);
         }
     }
 
