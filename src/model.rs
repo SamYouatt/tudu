@@ -7,6 +7,7 @@ pub enum Command {
     Add(AddCommand),
     Remove(RemoveCommand),
     Set(SetCommand),
+    Edit(EditCommand),
     View(ViewCommand),
 }
 
