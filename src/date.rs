@@ -55,6 +55,10 @@ impl TuduDate {
 
         TuduDate { day, month, year }
     }
+
+    pub fn to_filename(&self) -> String {
+        format!("{}-{:02}-{:02}.txt", self.year, self.month, self.day)
+    }
 }
 
 fn is_valid_date(day: u32, month: u32) -> Result<(), TuduError> {
@@ -104,5 +108,16 @@ mod tests {
         assert_eq!(day, date.day);
         assert_eq!(month, date.month);
         assert_eq!(year, date.year);
+    }
+
+    #[test]
+    fn to_filename_generates_correctly_formatted_name() {
+        let date = TuduDate::new(7, 6, 2023);
+
+        let expected_filename = String::from("2023-06-07.txt");
+
+        let filename = date.to_filename();
+
+        assert_eq!(filename, expected_filename);
     }
 }

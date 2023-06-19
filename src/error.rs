@@ -6,4 +6,8 @@ pub enum TuduError {
     InvalidIndex,
     InvalidState,
     InvalidCommand,
+    NoTaskFile,
+    FailedToReadFile,
+    FailedToWriteFile,
+    BadTaskFormat,
 }
