@@ -1,8 +1,9 @@
 use crate::date::TuduDate;
 use crate::error::TuduError;
 use crate::model::TaskState;
-use std::fs::File;
-use std::io::Read;
+use std::error::Error;
+use std::fs::{File, OpenOptions};
+use std::io::{Read, Write};
 
 #[derive(Debug, PartialEq, Eq)]
 struct Task {
@@ -123,5 +124,36 @@ mod tests {
         let task = parse_task_line(line).unwrap();
 
         assert_eq!(task, expected_task);
+    }
+
+    #[test]
+    fn write_tasks_to_file_writes_with_correct_format() {
+        let filename = "./src/tests/2023-01-01.txt";
+
+        let tasks = vec![
+            Task::new(String::from("This task is started"), TaskState::Started),
+            Task::new(String::from("This one is completed"), TaskState::Complete),
+            Task::new(String::from("Didn't like this one"), TaskState::Ignored),
+            Task::new(String::from("This one's for later"), TaskState::Forwarded),
+            Task::new(String::from("Patience is a virtue"), TaskState::NotStarted),
+        ];
+
+        let expected_contents = "S,This task is started
+C,This one is completed
+X,Didn't like this one
+F,This one's for later
+N,Patience is a virtue
+";
+
+        write_tasks_to_file(filename, &tasks).unwrap();
+
+        let mut file = File::open(filename).unwrap();
+        let mut contents = String::new();
+        file.read_to_string(&mut contents).unwrap();
+
+        assert_eq!(contents, expected_contents);
+
+        // cleanup
+        std::fs::remove_file(filename).unwrap();
     }
 }
