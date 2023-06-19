@@ -95,6 +95,10 @@ impl TaskList<'_> {
         }
     }
 
+    pub fn remove_task(&mut self, index: usize) -> Result<(), TuduError> {
+        todo!()
+    }
+
     fn empty(date: &TuduDate) -> TaskList {
         TaskList {
             tasks: Vec::new(),
@@ -181,6 +185,44 @@ mod tests {
         let expected_error = TuduError::InvalidIndex;
 
         let result = task_list.set_task_state(2, TaskState::Complete);
+
+        assert!(result.is_err());
+        assert_eq!(result.err().unwrap(), expected_error);
+    }
+
+    #[test]
+    fn remove_task_at_index_removes_that_task() {
+        let date = TuduDate::new(1, 1, 2023);
+        let first_task = Task::new(String::from("AAA"), TaskState::Complete);
+        let second_task = Task::new(String::from("BBB"), TaskState::Complete);
+
+        let expected_task_list = TaskList {
+            tasks: vec![first_task.clone()],
+            date: &date,
+        };
+
+        let mut task_list = TaskList {
+            date: &date,
+            tasks: vec![first_task, second_task],
+        };
+
+        task_list.remove_task(2).unwrap();
+
+        assert_eq!(task_list.tasks, expected_task_list.tasks);
+    }
+
+    #[test]
+    fn removes_task_at_index_if_no_task_at_index_throws_error() {
+        let date = TuduDate::new(1, 1, 2023);
+
+        let mut task_list = TaskList {
+            date: &date,
+            tasks: vec![Task::new(String::from("AAA"), TaskState::NotStarted)],
+        };
+
+        let expected_error = TuduError::InvalidIndex;
+
+        let result = task_list.remove_task(2);
 
         assert!(result.is_err());
         assert_eq!(result.err().unwrap(), expected_error);
