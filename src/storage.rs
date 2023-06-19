@@ -1,3 +1,4 @@
+use crate::date::TuduDate;
 use crate::error::TuduError;
 use crate::model::TaskState;
 use std::fs::File;
@@ -25,7 +26,7 @@ impl TaskList {
         TaskList { tasks: Vec::new() }
     }
 
-    pub fn try_create_from_file(date: &TuduDate) -> Result<TaskList, TuduError> {
+    pub fn for_date(date: &TuduDate) -> Result<TaskList, TuduError> {
         let filename = date.to_filename();
 
         match parse_task_file(&filename) {
@@ -107,7 +108,7 @@ mod tests {
 
         let expected_task_list = TaskList::empty();
 
-        let task_list = TaskList::try_create_from_file(&date).unwrap();
+        let task_list = TaskList::for_date(&date).unwrap();
 
         assert_eq!(task_list, expected_task_list);
     }
