@@ -89,7 +89,7 @@ impl TaskList<'_> {
         }
     }
 
-    fn write_to_file(self) -> Result<(), TuduError> {
+    fn write_to_file(&self) -> Result<(), TuduError> {
         let filename = self.date.to_filename();
 
         write_tasks_to_file(&filename, &self.tasks)
