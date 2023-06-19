@@ -83,6 +83,38 @@ fn parse_task_line(line: &str) -> Result<Task, TuduError> {
     Ok(Task { task, state })
 }
 
+fn write_tasks_to_file(filename: &str, tasks: &Vec<Task>) -> Result<(), Box<dyn Error>> {
+    let mut file = match OpenOptions::new()
+        .write(true)
+        .truncate(true)
+        .create(true)
+        .open(filename)
+    {
+        Ok(f) => f,
+        Err(err) => return Err(Box::new(err)),
+    };
+
+    let lines = tasks.iter().map(|task| {
+        let state = match task.state {
+            TaskState::NotStarted => "N",
+            TaskState::Started => "S",
+            TaskState::Complete => "C",
+            TaskState::Forwarded => "F",
+            TaskState::Ignored => "X",
+        };
+
+        return format!("{},{}\n", state, task.task);
+    });
+
+    for line in lines {
+        if let Err(err) = file.write_all(line.as_bytes()) {
+            return Err(Box::new(err));
+        }
+    }
+
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

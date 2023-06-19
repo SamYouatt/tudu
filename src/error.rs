@@ -8,5 +8,6 @@ pub enum TuduError {
     InvalidCommand,
     NoTaskFile,
     FailedToReadFile,
+    FailedToWriteFile,
     BadTaskFormat,
 }
