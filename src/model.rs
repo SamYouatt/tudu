@@ -112,6 +112,25 @@ impl TaskList<'_> {
     }
 
     pub fn get_formatted_tasks(&self) -> String {
+        let mut formatted_output = String::new();
+
+        self.tasks.iter().enumerate().for_each(|(index, task)| {
+            let icon = match task.state {
+                TaskState::NotStarted => "◯",
+                TaskState::Started => "◐",
+                TaskState::Complete => "●",
+                TaskState::Forwarded => "►",
+                TaskState::Ignored => "x",
+            };
+            let description = &task.task;
+            let formatted_index = index + 1;
+
+            let formatted = format!("{formatted_index}    {icon} - {description}\n");
+
+            formatted_output.push_str(&formatted);
+        });
+
+        formatted_output
     }
 
     fn empty(date: &TuduDate) -> TaskList {
