@@ -49,6 +49,12 @@ pub struct ViewCommand {
     pub date: TuduDate,
 }
 
+#[derive(Eq, PartialEq, Debug)]
+pub struct EditCommand {
+    pub index: usize,
+    pub task: String,
+}
+
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Task {
     pub task: String,
