@@ -27,6 +27,8 @@ fn execute_add(config: AddCommand) -> Result<(), TuduError> {
 
     task_list.add_task(new_task);
 
+    task_list.write_to_file()?;
+
     Ok(())
 }
 

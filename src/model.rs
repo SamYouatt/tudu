@@ -140,7 +140,7 @@ impl TaskList<'_> {
         }
     }
 
-    fn write_to_file(&self) -> Result<(), TuduError> {
+    pub fn write_to_file(&self) -> Result<(), TuduError> {
         let filename = self.date.to_filename();
 
         let filepath = create_filepath(&filename)?;
