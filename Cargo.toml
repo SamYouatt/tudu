@@ -3,6 +3,10 @@ name = "tudu"
 version = "1.0.0"
 edition = "2021"
 license = "GPL-3.0-or-later"
+desription = "Manage your tasks with a simple but powerful system"
+repository = "https://github.com/SamYouatt/tudu"
+readme = "README.md"
+publish = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
