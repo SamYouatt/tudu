@@ -9,6 +9,7 @@ pub enum Command {
     Set(SetCommand),
     Edit(EditCommand),
     View(ViewCommand),
+    Help,
 }
 
 #[derive(Eq, PartialEq, Debug, Clone)]
