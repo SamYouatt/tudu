@@ -5,7 +5,7 @@ use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use std::{env, fs};
 
-pub fn parse_task_file(filename: &str) -> Result<Vec<Task>, TuduError> {
+pub fn parse_task_file(filename: &PathBuf) -> Result<Vec<Task>, TuduError> {
     let mut file = match File::open(filename) {
         Ok(file) => file,
         Err(_) => return Err(TuduError::NoTaskFile),
@@ -122,7 +122,7 @@ mod tests {
             Task::new(String::from("Patience is a virtue"), TaskState::NotStarted),
         ];
 
-        let tasks = parse_task_file(filename).unwrap();
+        let tasks = parse_task_file(&PathBuf::from(filename)).unwrap();
 
         assert_eq!(tasks, expected_tasks);
     }
