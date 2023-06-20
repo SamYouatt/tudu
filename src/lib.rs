@@ -1,3 +1,4 @@
+use error::fail_with_error;
 use execute::execute_command;
 
 use crate::date::TuduDate;
@@ -160,10 +161,12 @@ fn parse_command(args: Vec<String>) -> Result<Command, TuduError> {
 pub fn run(args: Vec<String>) {
     let command = match parse_command(args) {
         Ok(command) => command,
-        Err(_) => todo!(),
+        Err(err) => return fail_with_error(err),
     };
 
-    let result = execute_command(command);
+    if let Err(err) = execute_command(command) {
+        return fail_with_error(err);
+    }
 }
 
 #[cfg(test)]
