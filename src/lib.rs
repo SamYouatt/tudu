@@ -115,7 +115,11 @@ fn parse_complete_command(args: Vec<String>) -> Result<Command, TuduError> {
 fn parse_edit_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
-        Err(_) => return Err(TuduError::InvalidIndex),
+        Err(_) => {
+            return Err(TuduError::InvalidArguments(String::from(
+                "`edit` accepts a task number and the new task description",
+            )))
+        }
     };
 
     let task = args[1].to_owned();
