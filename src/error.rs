@@ -11,4 +11,5 @@ pub enum TuduError {
     FailedToWriteFile,
     BadTaskFormat,
     InvalidTaskDirectory,
+    FailedToMakeDirectory,
 }
