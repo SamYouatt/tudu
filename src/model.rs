@@ -71,8 +71,9 @@ pub struct TaskList<'a> {
 impl TaskList<'_> {
     pub fn for_date(date: &TuduDate) -> Result<TaskList, TuduError> {
         let filename = date.to_filename();
+        let filepath = create_filepath(&filename)?;
 
-        match parse_task_file(&filename) {
+        match parse_task_file(&filepath) {
             Ok(tasks) => Ok(TaskList { tasks, date }),
             Err(TuduError::NoTaskFile) => Ok(TaskList::empty(date)),
             Err(err) => Err(err),
@@ -112,6 +113,10 @@ impl TaskList<'_> {
     }
 
     pub fn get_formatted_tasks(&self) -> String {
+        if self.tasks.len() == 0 {
+            return format!("There are no tasks for this date");
+        }
+
         let mut formatted_output = String::new();
 
         self.tasks.iter().enumerate().for_each(|(index, task)| {
@@ -140,7 +145,7 @@ impl TaskList<'_> {
         }
     }
 
-    fn write_to_file(&self) -> Result<(), TuduError> {
+    pub fn write_to_file(&self) -> Result<(), TuduError> {
         let filename = self.date.to_filename();
 
         let filepath = create_filepath(&filename)?;
@@ -314,5 +319,17 @@ mod tests {
         let formatted = task_list.get_formatted_tasks();
 
         assert_eq!(formatted, expected_formatting);
+    }
+
+    #[test]
+    fn get_formatted_tasks_when_empty_gives_helpful_message() {
+        let date = TuduDate::today();
+        let task_list = TaskList::empty(&date);
+
+        let expected_message = "There are no tasks for this date";
+
+        let message = task_list.get_formatted_tasks();
+
+        assert_eq!(message, expected_message);
     }
 }

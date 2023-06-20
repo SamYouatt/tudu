@@ -1,6 +1,5 @@
 #[derive(Debug, PartialEq, Eq)]
 pub enum TuduError {
-    InvalidTask,
     InvalidDate,
     InvalidArguments(String),
     InvalidIndex,
@@ -11,4 +10,5 @@ pub enum TuduError {
     FailedToWriteFile,
     BadTaskFormat,
     InvalidTaskDirectory,
+    FailedToMakeDirectory,
 }

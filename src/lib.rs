@@ -1,3 +1,5 @@
+use execute::execute_command;
+
 use crate::date::TuduDate;
 use crate::error::TuduError;
 use crate::model::{
@@ -5,21 +7,16 @@ use crate::model::{
 };
 mod date;
 mod error;
+mod execute;
 mod model;
 mod storage;
 
-fn parse_add_command(args: Vec<&str>) -> Result<Command, TuduError> {
-    let task_arg = args[0].to_owned();
-
-    if !task_arg.starts_with("\"") && !task_arg.ends_with("\"") {
-        return Err(TuduError::InvalidTask);
-    }
-
-    let task = task_arg.replace("\"", "");
+fn parse_add_command(args: Vec<String>) -> Result<Command, TuduError> {
+    let task = args[0].to_owned();
 
     let date =
         match args.len() {
-            2 => Some(TuduDate::from_date(args[1])?),
+            2 => Some(TuduDate::from_date(args[1].as_str())?),
             1 => None,
             _ => return Err(TuduError::InvalidArguments(String::from(
                 "`add` accepts a task, e.g. \"Example task\", and an optional date, e.g. 10-6-2023",
@@ -31,14 +28,14 @@ fn parse_add_command(args: Vec<&str>) -> Result<Command, TuduError> {
     return Ok(Command::Add(config));
 }
 
-fn parse_remove_command(args: Vec<&str>) -> Result<Command, TuduError> {
+fn parse_remove_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
         Err(_) => return Err(TuduError::InvalidIndex),
     };
 
     let date = match args.len() {
-        2 => Some(TuduDate::from_date(args[1])?),
+        2 => Some(TuduDate::from_date(args[1].as_str())?),
         1 => None,
         _ => {
             return Err(TuduError::InvalidArguments(String::from(
@@ -52,19 +49,14 @@ fn parse_remove_command(args: Vec<&str>) -> Result<Command, TuduError> {
     return Ok(Command::Remove(config));
 }
 
-fn parse_set_command(args: Vec<&str>) -> Result<Command, TuduError> {
+fn parse_set_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
         Err(_) => return Err(TuduError::InvalidIndex),
     };
 
-    let state = match args.get(1) {
-        Some(&"C") => TaskState::Complete,
-        Some(&"N") => TaskState::NotStarted,
-        Some(&"S") => TaskState::Started,
-        Some(&"F") => TaskState::Forwarded,
-        Some(&"X") => TaskState::Ignored,
-        Some(_) => return Err(TuduError::InvalidState),
+    let arg_as_str = match args.get(1) {
+        Some(value) => value.as_str(),
         None => {
             return Err(TuduError::InvalidArguments(String::from(
                 "`set` accepts a task number and a task state, for states see `tudu help`",
@@ -72,9 +64,18 @@ fn parse_set_command(args: Vec<&str>) -> Result<Command, TuduError> {
         }
     };
 
+    let state = match arg_as_str {
+        "C" => TaskState::Complete,
+        "N" => TaskState::NotStarted,
+        "S" => TaskState::Started,
+        "F" => TaskState::Forwarded,
+        "X" => TaskState::Ignored,
+        _ => return Err(TuduError::InvalidState),
+    };
+
     let date = match args.len() {
         2 => None,
-        3 => Some(TuduDate::from_date(args[2])?),
+        3 => Some(TuduDate::from_date(args[2].as_str())?),
         _ => return Err(TuduError::InvalidArguments(
                     String::from("`set` accepts a task number, a task state, and an optional date, e.g. 10-6-2023. For states see `tudu help`")
                 )),
@@ -85,7 +86,7 @@ fn parse_set_command(args: Vec<&str>) -> Result<Command, TuduError> {
     return Ok(Command::Set(config));
 }
 
-fn parse_complete_command(args: Vec<&str>) -> Result<Command, TuduError> {
+fn parse_complete_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
         Err(_) => return Err(TuduError::InvalidIndex),
@@ -93,7 +94,7 @@ fn parse_complete_command(args: Vec<&str>) -> Result<Command, TuduError> {
 
     let date = match args.len() {
         1 => None,
-        2 => Some(TuduDate::from_date(args[1])?),
+        2 => Some(TuduDate::from_date(args[1].as_str())?),
         _ => {
             return Err(TuduError::InvalidArguments(String::from(
                 "`complete` accepts a task number and an optional date, e.g. 10-6-2023",
@@ -110,40 +111,34 @@ fn parse_complete_command(args: Vec<&str>) -> Result<Command, TuduError> {
     return Ok(Command::Set(config));
 }
 
-fn parse_edit_command(args: Vec<&str>) -> Result<Command, TuduError> {
+fn parse_edit_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
         Err(_) => return Err(TuduError::InvalidIndex),
     };
 
-    let task_arg = args[1].to_owned();
-
-    if !task_arg.starts_with("\"") && !task_arg.ends_with("\"") {
-        return Err(TuduError::InvalidTask);
-    }
-
-    let task = task_arg.replace("\"", "");
+    let task = args[1].to_owned();
 
     let config = EditCommand { index, task };
 
     return Ok(Command::Edit(config));
 }
 
-fn parse_view_command(args: Vec<&str>) -> Result<Command, TuduError> {
+fn parse_view_command(args: Vec<String>) -> Result<Command, TuduError> {
     if args.len() < 1 {
         return Err(TuduError::InvalidArguments(String::from(
             "`view` accepts a date, e.g. 10-6-2023",
         )));
     }
 
-    let date = TuduDate::from_date(args[0])?;
+    let date = TuduDate::from_date(args[0].as_str())?;
 
     let config = ViewCommand { date };
 
     return Ok(Command::View(config));
 }
 
-pub fn parse_command(args: Vec<&str>) -> Result<Command, TuduError> {
+fn parse_command(args: Vec<String>) -> Result<Command, TuduError> {
     if args.len() == 1 {
         let root_config = ViewCommand {
             date: TuduDate::today(),
@@ -151,7 +146,7 @@ pub fn parse_command(args: Vec<&str>) -> Result<Command, TuduError> {
         return Ok(Command::View(root_config));
     }
 
-    match args[1] {
+    match args[1].as_str() {
         "add" => parse_add_command(args[2..].to_vec()),
         "remove" => parse_remove_command(args[2..].to_vec()),
         "set" => parse_set_command(args[2..].to_vec()),
@@ -162,6 +157,15 @@ pub fn parse_command(args: Vec<&str>) -> Result<Command, TuduError> {
     }
 }
 
+pub fn run(args: Vec<String>) {
+    let command = match parse_command(args) {
+        Ok(command) => command,
+        Err(_) => todo!(),
+    };
+
+    let result = execute_command(command);
+}
+
 #[cfg(test)]
 mod tests {
     use chrono::{DateTime, Datelike, Local};
@@ -170,7 +174,7 @@ mod tests {
 
     #[test]
     fn create_root_command_from_no_args() {
-        let args = vec!["tudu"];
+        let args = vec![String::from("tudu")];
 
         let now: DateTime<Local> = Local::now();
         let day = now.day();
@@ -189,7 +193,11 @@ mod tests {
 
     #[test]
     fn create_add_command_with_only_task_when_no_date() {
-        let args = vec!["tudu", "add", "\"Example task\""];
+        let args = vec![
+            String::from("tudu"),
+            String::from("add"),
+            String::from("Example task"),
+        ];
 
         let expected_config = AddCommand {
             task: String::from("Example task"),
@@ -204,7 +212,12 @@ mod tests {
 
     #[test]
     fn create_add_command_with_date_when_given() {
-        let args = vec!["tudu", "add", "\"Example task\"", "10-6-2023"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("add"),
+            String::from("Example task"),
+            String::from("10-6-2023"),
+        ];
 
         let expected_config = AddCommand {
             task: String::from("Example task"),
@@ -219,7 +232,11 @@ mod tests {
 
     #[test]
     fn create_remove_command_without_date() {
-        let args = vec!["tudu", "remove", "2"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("remove"),
+            String::from("2"),
+        ];
 
         let expected_config = RemoveCommand {
             index: 2,
@@ -234,7 +251,12 @@ mod tests {
 
     #[test]
     fn create_remove_command_with_date() {
-        let args = vec!["tudu", "remove", "2", "10-6-2023"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("remove"),
+            String::from("2"),
+            String::from("10-6-2023"),
+        ];
 
         let expected_config = RemoveCommand {
             index: 2,
@@ -248,7 +270,12 @@ mod tests {
 
     #[test]
     fn create_set_command_without_date() {
-        let args = vec!["tudu", "set", "3", "S"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("set"),
+            String::from("3"),
+            String::from("S"),
+        ];
 
         let expected_config = SetCommand {
             index: 3,
@@ -264,7 +291,13 @@ mod tests {
 
     #[test]
     fn create_set_command_with_date() {
-        let args = vec!["tudu", "set", "3", "X", "10-6-2023"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("set"),
+            String::from("3"),
+            String::from("X"),
+            String::from("10-6-2023"),
+        ];
 
         let expected_config = SetCommand {
             index: 3,
@@ -280,7 +313,11 @@ mod tests {
 
     #[test]
     fn create_complete_command_without_date() {
-        let args = vec!["tudu", "complete", "2"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("complete"),
+            String::from("2"),
+        ];
 
         let expected_config = SetCommand {
             index: 2,
@@ -296,7 +333,12 @@ mod tests {
 
     #[test]
     fn create_complete_command_with_date() {
-        let args = vec!["tudu", "complete", "3", "10-6-2023"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("complete"),
+            String::from("3"),
+            String::from("10-6-2023"),
+        ];
 
         let expected_config = SetCommand {
             index: 3,
@@ -312,7 +354,11 @@ mod tests {
 
     #[test]
     fn create_view_command_with_date() {
-        let args = vec!["tudu", "view", "10-6-2023"];
+        let args = vec![
+            String::from("tudu"),
+            String::from("view"),
+            String::from("10-6-2023"),
+        ];
 
         let expected_config = ViewCommand {
             date: TuduDate::new(10, 6, 2023),
@@ -326,7 +372,12 @@ mod tests {
 
     #[test]
     fn create_edit_command() {
-        let args = vec!["tudu", "edit", "2", "\"Updated task\""];
+        let args = vec![
+            String::from("tudu"),
+            String::from("edit"),
+            String::from("2"),
+            String::from("Updated task"),
+        ];
 
         let expected_config = EditCommand {
             index: 2,

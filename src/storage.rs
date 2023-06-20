@@ -1,11 +1,11 @@
 use crate::error::TuduError;
 use crate::model::{Task, TaskState};
-use std::env;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+use std::{env, fs};
 
-pub fn parse_task_file(filename: &str) -> Result<Vec<Task>, TuduError> {
+pub fn parse_task_file(filename: &PathBuf) -> Result<Vec<Task>, TuduError> {
     let mut file = match File::open(filename) {
         Ok(file) => file,
         Err(_) => return Err(TuduError::NoTaskFile),
@@ -47,11 +47,13 @@ fn parse_task_line(line: &str) -> Result<Task, TuduError> {
 }
 
 pub fn create_filepath(filename: &str) -> Result<PathBuf, TuduError> {
-    let tasks_directory = match env::var("TUDU_ERROR") {
+    let tasks_directory = match env::var("TUDU_TASKS") {
         Ok(path) => path,
         Err(env::VarError::NotPresent) => {
             let home = env::var("HOME").expect("Unable to find HOME environment variable");
-            format!("{home}/.tudu")
+            let default_dir = format!("{home}/.tudu");
+            build_dir_if_needed(&default_dir)?;
+            default_dir
         }
         Err(_) => return Err(TuduError::InvalidTaskDirectory),
     };
@@ -93,6 +95,17 @@ pub fn write_tasks_to_file(filename: &PathBuf, tasks: &Vec<Task>) -> Result<(), 
     Ok(())
 }
 
+fn build_dir_if_needed(dir_path: &String) -> Result<(), TuduError> {
+    if !Path::is_dir(&PathBuf::from(&dir_path)) {
+        return match fs::create_dir_all(dir_path) {
+            Ok(_) => Ok(()),
+            Err(_) => Err(TuduError::FailedToMakeDirectory),
+        };
+    };
+
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -109,7 +122,7 @@ mod tests {
             Task::new(String::from("Patience is a virtue"), TaskState::NotStarted),
         ];
 
-        let tasks = parse_task_file(filename).unwrap();
+        let tasks = parse_task_file(&PathBuf::from(filename)).unwrap();
 
         assert_eq!(tasks, expected_tasks);
     }
