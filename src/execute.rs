@@ -42,7 +42,7 @@ fn execute_remove(config: RemoveCommand) -> Result<(), TuduError> {
 
     let mut task_list = TaskList::for_date(&date)?;
 
-    task_list.remove_task(config.index);
+    task_list.remove_task(config.index)?;
 
     task_list.write_to_file()?;
 

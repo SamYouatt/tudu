@@ -1,3 +1,4 @@
+use error::fail_with_error;
 use execute::execute_command;
 
 use crate::date::TuduDate;
@@ -31,7 +32,11 @@ fn parse_add_command(args: Vec<String>) -> Result<Command, TuduError> {
 fn parse_remove_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
-        Err(_) => return Err(TuduError::InvalidIndex),
+        Err(_) => {
+            return Err(TuduError::InvalidArguments(String::from(
+                "`remove` accepts a task number and an optional date, e.g. 10-06-2023",
+            )))
+        }
     };
 
     let date = match args.len() {
@@ -52,7 +57,11 @@ fn parse_remove_command(args: Vec<String>) -> Result<Command, TuduError> {
 fn parse_set_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
-        Err(_) => return Err(TuduError::InvalidIndex),
+        Err(_) => {
+            return Err(TuduError::InvalidArguments(String::from(
+                "`set` accepts a task number and a task state, for states see `tudu help`",
+            )))
+        }
     };
 
     let arg_as_str = match args.get(1) {
@@ -89,7 +98,11 @@ fn parse_set_command(args: Vec<String>) -> Result<Command, TuduError> {
 fn parse_complete_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
-        Err(_) => return Err(TuduError::InvalidIndex),
+        Err(_) => {
+            return Err(TuduError::InvalidArguments(String::from(
+                "`complete` accepts a task number and an optional date, e.g. 10-6-2023",
+            )))
+        }
     };
 
     let date = match args.len() {
@@ -114,7 +127,11 @@ fn parse_complete_command(args: Vec<String>) -> Result<Command, TuduError> {
 fn parse_edit_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
-        Err(_) => return Err(TuduError::InvalidIndex),
+        Err(_) => {
+            return Err(TuduError::InvalidArguments(String::from(
+                "`edit` accepts a task number and the new task description",
+            )))
+        }
     };
 
     let task = args[1].to_owned();
@@ -160,10 +177,12 @@ fn parse_command(args: Vec<String>) -> Result<Command, TuduError> {
 pub fn run(args: Vec<String>) {
     let command = match parse_command(args) {
         Ok(command) => command,
-        Err(_) => todo!(),
+        Err(err) => return fail_with_error(err),
     };
 
-    let result = execute_command(command);
+    if let Err(err) = execute_command(command) {
+        return fail_with_error(err);
+    }
 }
 
 #[cfg(test)]
