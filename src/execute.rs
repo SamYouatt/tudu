@@ -1,13 +1,14 @@
 use crate::date::TuduDate;
 use crate::model::{
-    AddCommand, Command, EditCommand, SetCommand, Task, TaskList, TaskState, ViewCommand,
+    AddCommand, Command, EditCommand, RemoveCommand, SetCommand, Task, TaskList, TaskState,
+    ViewCommand,
 };
 use crate::TuduError;
 
 pub fn execute_command(command: Command) -> Result<(), TuduError> {
     match command {
         Command::Add(config) => execute_add(config),
-        Command::Remove(_) => todo!(),
+        Command::Remove(config) => execute_remove(config),
         Command::Set(config) => execute_set(config),
         Command::Edit(config) => execute_edit(config),
         Command::View(config) => execute_view(config),
@@ -25,6 +26,19 @@ fn execute_add(config: AddCommand) -> Result<(), TuduError> {
     let mut task_list = TaskList::for_date(&date)?;
 
     task_list.add_task(new_task);
+
+    Ok(())
+}
+
+fn execute_remove(config: RemoveCommand) -> Result<(), TuduError> {
+    let date = match config.date {
+        Some(date) => date,
+        None => TuduDate::today(),
+    };
+
+    let mut task_list = TaskList::for_date(&date)?;
+
+    task_list.remove_task(config.index);
 
     Ok(())
 }
