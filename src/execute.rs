@@ -29,6 +29,8 @@ fn execute_add(config: AddCommand) -> Result<(), TuduError> {
 
     task_list.write_to_file()?;
 
+    print_tasks(&task_list);
+
     Ok(())
 }
 
@@ -43,6 +45,8 @@ fn execute_remove(config: RemoveCommand) -> Result<(), TuduError> {
     task_list.remove_task(config.index);
 
     task_list.write_to_file()?;
+
+    print_tasks(&task_list);
 
     Ok(())
 }
@@ -59,6 +63,8 @@ fn execute_set(config: SetCommand) -> Result<(), TuduError> {
 
     task_list.write_to_file()?;
 
+    print_tasks(&task_list);
+
     Ok(())
 }
 
@@ -72,15 +78,21 @@ fn execute_edit(config: EditCommand) -> Result<(), TuduError> {
 
     task_list.write_to_file()?;
 
+    print_tasks(&task_list);
+
     Ok(())
 }
 
 fn execute_view(config: ViewCommand) -> Result<(), TuduError> {
     let task_list = TaskList::for_date(&config.date)?;
 
+    print_tasks(&task_list);
+
+    Ok(())
+}
+
+fn print_tasks(task_list: &TaskList) {
     let formatted_tasks = task_list.get_formatted_tasks();
 
     println!("{formatted_tasks}");
-
-    Ok(())
 }
