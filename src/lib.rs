@@ -12,13 +12,7 @@ mod model;
 mod storage;
 
 fn parse_add_command(args: Vec<String>) -> Result<Command, TuduError> {
-    let task_arg = args[0].to_owned();
-
-    if !task_arg.starts_with("\"") && !task_arg.ends_with("\"") {
-        return Err(TuduError::InvalidTask);
-    }
-
-    let task = task_arg.replace("\"", "");
+    let task = args[0].to_owned();
 
     let date =
         match args.len() {
@@ -123,13 +117,7 @@ fn parse_edit_command(args: Vec<String>) -> Result<Command, TuduError> {
         Err(_) => return Err(TuduError::InvalidIndex),
     };
 
-    let task_arg = args[1].to_owned();
-
-    if !task_arg.starts_with("\"") && !task_arg.ends_with("\"") {
-        return Err(TuduError::InvalidTask);
-    }
-
-    let task = task_arg.replace("\"", "");
+    let task = args[1].to_owned();
 
     let config = EditCommand { index, task };
 
