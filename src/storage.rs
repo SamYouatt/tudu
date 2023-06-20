@@ -47,7 +47,7 @@ fn parse_task_line(line: &str) -> Result<Task, TuduError> {
 }
 
 pub fn create_filepath(filename: &str) -> Result<PathBuf, TuduError> {
-    let tasks_directory = match env::var("TUDU_ERROR") {
+    let tasks_directory = match env::var("TUDU_TASKS") {
         Ok(path) => path,
         Err(env::VarError::NotPresent) => {
             let home = env::var("HOME").expect("Unable to find HOME environment variable");
