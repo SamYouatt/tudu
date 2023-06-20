@@ -1,4 +1,4 @@
-use chrono::{Datelike, Local};
+use chrono::{DateTime, Datelike, Duration, Local};
 
 use crate::error::TuduError;
 
@@ -15,6 +15,13 @@ impl TuduDate {
     }
 
     pub fn from_date(date: &str) -> Result<TuduDate, TuduError> {
+        match date {
+            "today" => return Ok(TuduDate::today()),
+            "tomorrow" => return Ok(TuduDate::tomorrow()),
+            "yesterday" => return Ok(TuduDate::yesterday()),
+            _ => {}
+        };
+
         let sections: Vec<&str> = date.split("-").collect();
 
         match sections.len() {
@@ -48,16 +55,33 @@ impl TuduDate {
     }
 
     pub fn today() -> TuduDate {
-        let now = Local::now();
-        let day = now.day();
-        let month = now.month();
-        let year = now.year().try_into().unwrap();
+        let today = Local::now();
 
-        TuduDate { day, month, year }
+        TuduDate::from_date_time(today)
     }
 
     pub fn to_filename(&self) -> String {
         format!("{}-{:02}-{:02}.txt", self.year, self.month, self.day)
+    }
+
+    fn tomorrow() -> TuduDate {
+        let tomorrow = Local::now() + Duration::days(1);
+
+        TuduDate::from_date_time(tomorrow)
+    }
+
+    fn yesterday() -> TuduDate {
+        let yesterday = Local::now() - Duration::days(1);
+
+        TuduDate::from_date_time(yesterday)
+    }
+
+    fn from_date_time(date_time: DateTime<Local>) -> TuduDate {
+        let day = date_time.day();
+        let month = date_time.month();
+        let year = date_time.year().try_into().unwrap();
+
+        TuduDate { day, month, year }
     }
 }
 
@@ -72,6 +96,8 @@ fn is_valid_date(day: u32, month: u32) -> Result<(), TuduError> {
 
 #[cfg(test)]
 mod tests {
+    use chrono::Duration;
+
     use super::*;
 
     #[test]
@@ -94,6 +120,38 @@ mod tests {
         let date = TuduDate::from_date(input_date).unwrap();
 
         assert_eq!(date, expected_date);
+    }
+
+    #[test]
+    fn from_date_when_given_relative_dates_creates_correct_dates() {
+        let today = Local::now();
+        let expected_today = TuduDate::today();
+
+        let yesterday = today - Duration::days(1);
+        let yesterday_input = format!(
+            "{}-{}-{}",
+            yesterday.day(),
+            yesterday.month(),
+            yesterday.year()
+        );
+        let expected_yesterday = TuduDate::from_date(&yesterday_input);
+
+        let tomorrow = today + Duration::days(1);
+        let tomorrow_input = format!(
+            "{}-{}-{}",
+            tomorrow.day(),
+            tomorrow.month(),
+            tomorrow.year()
+        );
+        let expected_tomorrow = TuduDate::from_date(&tomorrow_input);
+
+        let today_date = TuduDate::from_date("today").unwrap();
+        let yeterday_date = TuduDate::from_date("yesterday").unwrap();
+        let tomorrow_date = TuduDate::from_date("tomorrow").unwrap();
+
+        assert_eq!(today_date, expected_today);
+        assert_eq!(today_date, expected_today);
+        assert_eq!(today_date, expected_today);
     }
 
     #[test]
