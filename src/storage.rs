@@ -51,7 +51,9 @@ pub fn create_filepath(filename: &str) -> Result<PathBuf, TuduError> {
         Ok(path) => path,
         Err(env::VarError::NotPresent) => {
             let home = env::var("HOME").expect("Unable to find HOME environment variable");
-            format!("{home}/.tudu")
+            let default_dir = format!("{home}/.tudu");
+            build_dir_if_needed(&default_dir)?;
+            default_dir
         }
         Err(_) => return Err(TuduError::InvalidTaskDirectory),
     };
