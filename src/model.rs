@@ -113,6 +113,10 @@ impl TaskList<'_> {
     }
 
     pub fn get_formatted_tasks(&self) -> String {
+        if self.tasks.len() == 0 {
+            return format!("There are no tasks for this date");
+        }
+
         let mut formatted_output = String::new();
 
         self.tasks.iter().enumerate().for_each(|(index, task)| {
