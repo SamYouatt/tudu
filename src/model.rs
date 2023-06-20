@@ -97,10 +97,16 @@ impl TaskList<'_> {
         }
     }
 
-    pub fn remove_task(&mut self, index: usize) {
+    pub fn remove_task(&mut self, index: usize) -> Result<(), TuduError> {
         let corrected_index = index - 1;
 
+        if corrected_index > self.tasks.len() {
+            return Err(TuduError::InvalidIndex);
+        }
+
         self.tasks.remove(corrected_index);
+
+        Ok(())
     }
 
     pub fn edit_task(&mut self, index: usize, new_task: String) -> Result<(), TuduError> {
