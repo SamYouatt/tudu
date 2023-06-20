@@ -72,6 +72,8 @@ fn is_valid_date(day: u32, month: u32) -> Result<(), TuduError> {
 
 #[cfg(test)]
 mod tests {
+    use chrono::Duration;
+
     use super::*;
 
     #[test]
@@ -94,6 +96,38 @@ mod tests {
         let date = TuduDate::from_date(input_date).unwrap();
 
         assert_eq!(date, expected_date);
+    }
+
+    #[test]
+    fn from_date_when_given_relative_dates_creates_correct_dates() {
+        let today = Local::now();
+        let expected_today = TuduDate::today();
+
+        let yesterday = today - Duration::days(1);
+        let yesterday_input = format!(
+            "{}-{}-{}",
+            yesterday.day(),
+            yesterday.month(),
+            yesterday.year()
+        );
+        let expected_yesterday = TuduDate::from_date(&yesterday_input);
+
+        let tomorrow = today + Duration::days(1);
+        let tomorrow_input = format!(
+            "{}-{}-{}",
+            tomorrow.day(),
+            tomorrow.month(),
+            tomorrow.year()
+        );
+        let expected_tomorrow = TuduDate::from_date(&tomorrow_input);
+
+        let today_date = TuduDate::from_date("today").unwrap();
+        let yeterday_date = TuduDate::from_date("yesterday").unwrap();
+        let tomorrow_date = TuduDate::from_date("tomorrow").unwrap();
+
+        assert_eq!(today_date, expected_today);
+        assert_eq!(today_date, expected_today);
+        assert_eq!(today_date, expected_today);
     }
 
     #[test]
