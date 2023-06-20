@@ -32,7 +32,11 @@ fn parse_add_command(args: Vec<String>) -> Result<Command, TuduError> {
 fn parse_remove_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
-        Err(_) => return Err(TuduError::InvalidIndex),
+        Err(_) => {
+            return Err(TuduError::InvalidArguments(String::from(
+                "`remove` accepts a task number and an optional date, e.g. 10-06-2023",
+            )))
+        }
     };
 
     let date = match args.len() {
@@ -53,7 +57,11 @@ fn parse_remove_command(args: Vec<String>) -> Result<Command, TuduError> {
 fn parse_set_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
-        Err(_) => return Err(TuduError::InvalidIndex),
+        Err(_) => {
+            return Err(TuduError::InvalidArguments(String::from(
+                "`set` accepts a task number and a task state, for states see `tudu help`",
+            )))
+        }
     };
 
     let arg_as_str = match args.get(1) {
@@ -90,7 +98,11 @@ fn parse_set_command(args: Vec<String>) -> Result<Command, TuduError> {
 fn parse_complete_command(args: Vec<String>) -> Result<Command, TuduError> {
     let index = match args[0].parse::<usize>() {
         Ok(index) => index,
-        Err(_) => return Err(TuduError::InvalidIndex),
+        Err(_) => {
+            return Err(TuduError::InvalidArguments(String::from(
+                "`complete` accepts a task number and an optional date, e.g. 10-6-2023",
+            )))
+        }
     };
 
     let date = match args.len() {
