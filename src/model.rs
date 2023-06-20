@@ -316,4 +316,16 @@ mod tests {
 
         assert_eq!(formatted, expected_formatting);
     }
+
+    #[test]
+    fn get_formatted_tasks_when_empty_gives_helpful_message() {
+        let date = TuduDate::today();
+        let task_list = TaskList::empty(&date);
+
+        let expected_message = "There are no tasks for this date";
+
+        let message = task_list.get_formatted_tasks();
+
+        assert_eq!(message, expected_message);
+    }
 }
