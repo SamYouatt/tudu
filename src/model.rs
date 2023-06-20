@@ -71,8 +71,9 @@ pub struct TaskList<'a> {
 impl TaskList<'_> {
     pub fn for_date(date: &TuduDate) -> Result<TaskList, TuduError> {
         let filename = date.to_filename();
+        let filepath = create_filepath(&filename)?;
 
-        match parse_task_file(&filename) {
+        match parse_task_file(&filepath) {
             Ok(tasks) => Ok(TaskList { tasks, date }),
             Err(TuduError::NoTaskFile) => Ok(TaskList::empty(date)),
             Err(err) => Err(err),
