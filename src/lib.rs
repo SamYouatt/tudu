@@ -208,7 +208,7 @@ mod tests {
         let args = vec![
             String::from("tudu"),
             String::from("add"),
-            String::from("\"Example task\""),
+            String::from("Example task"),
         ];
 
         let expected_config = AddCommand {
@@ -227,7 +227,7 @@ mod tests {
         let args = vec![
             String::from("tudu"),
             String::from("add"),
-            String::from("\"Example task\""),
+            String::from("Example task"),
             String::from("10-6-2023"),
         ];
 
@@ -388,7 +388,7 @@ mod tests {
             String::from("tudu"),
             String::from("edit"),
             String::from("2"),
-            String::from("\"Updated task\""),
+            String::from("Updated task"),
         ];
 
         let expected_config = EditCommand {
