@@ -1,33 +1,26 @@
 # Tudu
 
+## Dates
 
-## Viewing tasks
+Dates can be specified in the following ways:
+- 10-6-2023: fully qualified dates, in d-m-yyyy format
+- 10-6: partial dates, excluding the year will set it to this calendar year
+- yesterday/today/tomorrow: there are three relative date commands that are also accepted
+- none specified: when an optional date is accepted and none is given, the current date is used
+
+## Commands
+
+### Viewing tasks
 
 `tudu` - Shows the tasks for today
 
-```
-1   ◯ - Do dishes
-2   ◐ - Do taxes
-3   ● - 5 pushups
-```
+`tudu view [date]` - Show the tasks for a specified date
 
-`tudu today/tomorrow/yesterday` - Shows the tasks for the relative day
+### Adding tasks
 
-`tudu 10-6` - Shows the tasks for the 10th of June in the current year
+`tudu add [task] *[date]` - Add the specified task to an optional date
 
-`tudu 10-6-2022` - Shows the tasks for the 10th of June 2022
-
-## Adding tasks
-
-`tudu add "Example task"` - Add the task to today's list
-
-`tudu add yesterday "Example task"` - Add the task to the relative day
-
-`tudu add 10-6` - Add the task to the 6th of June in the current year
-
-`tudu add 10-6-2022` - Add the task to the 6th of June 2023
-
-## Setting task states
+### Setting task states
 
 ```
 ◯ - [N]ot started
@@ -37,16 +30,22 @@
 x - [X] Not doing
 ```
 
-`tudu set 1 C` - Set the first task of today to complete
+`tudu set [index] [state] *[date]` - Set the task at the given index to the given state on an optional date
 
-`tudu set yesterday 3 X` - Set the third task of yesterday to Not Doing
+### Removing tasks
 
-`tudu set 10-6 2 F` - Set the second task of 6th of June this year to Carrying Forward
+`tudu delete [index] *[date]` - Delete the task at the specified index on an optional date
 
-`tudu set 10-6-2022 2 S` - Set the second task of 10th of June 2022 to Started
+### Completing tasks
 
-`tudu complete 2` - Complete the second task from today
+`tudu complete [index] *[date]` - Mark the specified task as complete on an optional date
 
-## Removing tasks
+This is equivalent to a `set` command with the `C` state.
 
-`tudu delete 3` - Delete the third task from today
+### Editing tasks
+
+`tudu edit [index] [task] *[date]` - Update the task at the given index with the new task description, with an optional date
+
+### Help
+
+`tudu help`
