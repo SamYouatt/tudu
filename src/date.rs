@@ -1,4 +1,4 @@
-use chrono::{Datelike, Local};
+use chrono::{DateTime, Datelike, Duration, Local};
 
 use crate::error::TuduError;
 
@@ -15,6 +15,13 @@ impl TuduDate {
     }
 
     pub fn from_date(date: &str) -> Result<TuduDate, TuduError> {
+        match date {
+            "today" => return Ok(TuduDate::today()),
+            "tomorrow" => return Ok(TuduDate::tomorrow()),
+            "yesterday" => return Ok(TuduDate::yesterday()),
+            _ => {}
+        };
+
         let sections: Vec<&str> = date.split("-").collect();
 
         match sections.len() {
@@ -48,16 +55,33 @@ impl TuduDate {
     }
 
     pub fn today() -> TuduDate {
-        let now = Local::now();
-        let day = now.day();
-        let month = now.month();
-        let year = now.year().try_into().unwrap();
+        let today = Local::now();
 
-        TuduDate { day, month, year }
+        TuduDate::from_date_time(today)
     }
 
     pub fn to_filename(&self) -> String {
         format!("{}-{:02}-{:02}.txt", self.year, self.month, self.day)
+    }
+
+    fn tomorrow() -> TuduDate {
+        let tomorrow = Local::now() + Duration::days(1);
+
+        TuduDate::from_date_time(tomorrow)
+    }
+
+    fn yesterday() -> TuduDate {
+        let yesterday = Local::now() - Duration::days(1);
+
+        TuduDate::from_date_time(yesterday)
+    }
+
+    fn from_date_time(date_time: DateTime<Local>) -> TuduDate {
+        let day = date_time.day();
+        let month = date_time.month();
+        let year = date_time.year().try_into().unwrap();
+
+        TuduDate { day, month, year }
     }
 }
 
