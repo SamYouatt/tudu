@@ -1,9 +1,9 @@
 use crate::error::TuduError;
 use crate::model::{Task, TaskState};
-use std::env;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+use std::{env, fs};
 
 pub fn parse_task_file(filename: &str) -> Result<Vec<Task>, TuduError> {
     let mut file = match File::open(filename) {
@@ -89,6 +89,17 @@ pub fn write_tasks_to_file(filename: &PathBuf, tasks: &Vec<Task>) -> Result<(), 
             return Err(TuduError::FailedToWriteFile);
         }
     }
+
+    Ok(())
+}
+
+fn build_dir_if_needed(dir_path: &String) -> Result<(), TuduError> {
+    if !Path::is_dir(&PathBuf::from(&dir_path)) {
+        return match fs::create_dir_all(dir_path) {
+            Ok(_) => Ok(()),
+            Err(_) => Err(TuduError::FailedToMakeDirectory),
+        };
+    };
 
     Ok(())
 }
