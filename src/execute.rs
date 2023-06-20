@@ -12,6 +12,7 @@ pub fn execute_command(command: Command) -> Result<(), TuduError> {
         Command::Set(config) => execute_set(config),
         Command::Edit(config) => execute_edit(config),
         Command::View(config) => execute_view(config),
+        Command::Help => Ok(execute_help()),
     }
 }
 

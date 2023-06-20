@@ -170,6 +170,7 @@ fn parse_command(args: Vec<String>) -> Result<Command, TuduError> {
         "complete" => parse_complete_command(args[2..].to_vec()),
         "view" => parse_view_command(args[2..].to_vec()),
         "edit" => parse_edit_command(args[2..].to_vec()),
+        "help" => Ok(Command::Help),
         _ => Err(TuduError::InvalidCommand),
     }
 }
