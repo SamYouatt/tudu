@@ -1,5 +1,5 @@
 use crate::date::TuduDate;
-use crate::model::{AddCommand, Command, Task, TaskList, TaskState, ViewCommand};
+use crate::model::{AddCommand, Command, EditCommand, Task, TaskList, TaskState, ViewCommand};
 use crate::TuduError;
 
 pub fn execute_command(command: Command) -> Result<(), TuduError> {
@@ -7,7 +7,7 @@ pub fn execute_command(command: Command) -> Result<(), TuduError> {
         Command::Add(config) => execute_add(config),
         Command::Remove(_) => todo!(),
         Command::Set(_) => todo!(),
-        Command::Edit(_) => todo!(),
+        Command::Edit(config) => execute_edit(config),
         Command::View(config) => execute_view(config),
     }
 }
@@ -23,6 +23,17 @@ fn execute_add(config: AddCommand) -> Result<(), TuduError> {
     let mut task_list = TaskList::for_date(&date)?;
 
     task_list.add_task(new_task);
+
+    Ok(())
+}
+
+fn execute_edit(config: EditCommand) -> Result<(), TuduError> {
+    // Todo: edit command needs to accept a specific date
+    let date = TuduDate::today();
+
+    let mut task_list = TaskList::for_date(&date)?;
+
+    task_list.edit_task(config.index, config.task)?;
 
     Ok(())
 }
