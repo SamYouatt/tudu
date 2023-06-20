@@ -42,6 +42,8 @@ fn execute_remove(config: RemoveCommand) -> Result<(), TuduError> {
 
     task_list.remove_task(config.index);
 
+    task_list.write_to_file()?;
+
     Ok(())
 }
 
@@ -55,6 +57,8 @@ fn execute_set(config: SetCommand) -> Result<(), TuduError> {
 
     task_list.set_task_state(config.index, config.state)?;
 
+    task_list.write_to_file()?;
+
     Ok(())
 }
 
@@ -65,6 +69,8 @@ fn execute_edit(config: EditCommand) -> Result<(), TuduError> {
     let mut task_list = TaskList::for_date(&date)?;
 
     task_list.edit_task(config.index, config.task)?;
+
+    task_list.write_to_file()?;
 
     Ok(())
 }
