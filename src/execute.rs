@@ -91,6 +91,28 @@ fn execute_view(config: ViewCommand) -> Result<(), TuduError> {
     Ok(())
 }
 
+fn execute_help() {
+    println!("Commands:");
+    println!("`tudu` - see the tasks for today");
+    println!("`tudu view [date]` - see tasks on given date");
+    println!("`tudu add [task] *[date]` - add specified task on optional date");
+    println!("`tudu set [index] [state] *[date]` - set specified task to provided state on optional date");
+    println!("`tudu complete [index] *[date]` - mark specified task as complete on optional date");
+    println!("`tudu edit [index] [task] *[date]` - edit specified task to new task description on optional date");
+    println!("`tudu remove [index] *[date]` - remove specified task on optional date");
+    println!("");
+    println!("Dates:");
+    println!("Dates can be written in the form 10-6-2023, 10-6 which uses the current year, or with relative date commands `yesterday/today/tomorrow`.");
+    println!("If a date is optional in a command and was not specified the command will use the current date");
+    println!("");
+    println!("States:");
+    println!("◯ - [N]ot started");
+    println!("◐ - [S]tarted");
+    println!("● - [C]ompleted");
+    println!("► - Carry [F]orward");
+    println!("x - [X] Not doing");
+}
+
 fn print_tasks(task_list: &TaskList) {
     let formatted_tasks = task_list.get_formatted_tasks();
 
