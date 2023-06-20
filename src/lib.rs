@@ -1,3 +1,5 @@
+use execute::execute_command;
+
 use crate::date::TuduDate;
 use crate::error::TuduError;
 use crate::model::{
@@ -5,6 +7,7 @@ use crate::model::{
 };
 mod date;
 mod error;
+mod execute;
 mod model;
 mod storage;
 
@@ -167,7 +170,12 @@ fn parse_command(args: Vec<String>) -> Result<Command, TuduError> {
 }
 
 pub fn run(args: Vec<String>) {
-    let command = parse_command(args);
+    let command = match parse_command(args) {
+        Ok(command) => command,
+        Err(_) => todo!(),
+    };
+
+    let result = execute_command(command);
 }
 
 #[cfg(test)]
