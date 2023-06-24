@@ -70,8 +70,10 @@ fn execute_set(config: SetCommand) -> Result<(), TuduError> {
 }
 
 fn execute_edit(config: EditCommand) -> Result<(), TuduError> {
-    // Todo: edit command needs to accept a specific date
-    let date = TuduDate::today();
+    let date = match config.date {
+        Some(date) => date,
+        None => TuduDate::today(),
+    };
 
     let mut task_list = TaskList::for_date(&date)?;
 
