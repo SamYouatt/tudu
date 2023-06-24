@@ -136,7 +136,17 @@ fn parse_edit_command(args: Vec<String>) -> Result<Command, TuduError> {
 
     let task = args[1].to_owned();
 
-    let config = EditCommand { index, task };
+    let date = match args.len() {
+        1 | 2 => None,
+        3 => Some(TuduDate::from_date(args[2].as_str())?),
+        _ => {
+            return Err(TuduError::InvalidArguments(String::from(
+                "`edit` accepts a task number, the modified task description, and an optional date, e.g. 10-6-2023",
+            )))
+        }
+    };
+
+    let config = EditCommand { index, task, date };
 
     return Ok(Command::Edit(config));
 }

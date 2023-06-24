@@ -49,6 +49,7 @@ pub struct ViewCommand {
 pub struct EditCommand {
     pub index: usize,
     pub task: String,
+    pub date: Option<TuduDate>,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
